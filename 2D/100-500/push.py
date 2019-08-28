@@ -7,6 +7,14 @@ import math,sys,os
 import numpy as np
 from yade import pack, ymport
 
+#basic parameters
+case=4
+v=-1
+dfric=0.3 #default 0 
+
+n_layer=9
+
+
 def GenerateFold(path):
 
     path=path.strip()
@@ -31,8 +39,6 @@ rpoisson = 0.25
 rfrictAng = math.atan(0.6)
 rreps = 0.06
 rden = 2500
-
-dfric=0.0 #default 0 
 
 #setting detachment materials ----- 
 dyoung = 2e7
@@ -59,11 +65,6 @@ detachment = O.materials.append(CpmMat(young = dyoung,
                           epsCrackOnset = dreps,
                           density = dden,
                           relDuctility = 0))
-
-#basic parameters
-v=-1
-n_layer=9
-case=0
 
 #adding deposit -----
 sample = ymport.text('./sample.txt')
