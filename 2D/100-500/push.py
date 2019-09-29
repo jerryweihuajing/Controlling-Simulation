@@ -9,8 +9,8 @@ from yade import pack, ymport
 
 #basic parameters
 case=int(raw_input())
-v=-0.2
-dfric=0.3 #default 0 
+v=-0.5
+dfric=0.0 #default 0 
 
 n_layer=9
 
@@ -160,8 +160,8 @@ height_base=case*height_step/2
 height_salt=case*height_step/2
 height_rock=maxh-height_base-height_salt
 
-base_detachment=True
-salt_detachment=False
+base_detachment=False
+salt_detachment=True
 
 #so many conditions
 for i in spheres:
@@ -211,7 +211,7 @@ if base_detachment:
 
 if salt_detachment:
 
-	folder_name='./base detachment/fric=%.1f v=%.1f/input/salt=%.2f' %(dfric,abs(v),height_base)
+	folder_name='./salt detachment/fric=%.1f v=%.1f/input/salt=%.2f' %(dfric,abs(v),height_base)
 
 
 #Generate Fold
