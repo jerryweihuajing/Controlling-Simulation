@@ -9,8 +9,8 @@ from yade import pack, ymport
 
 #basic parameters
 case=int(raw_input())
-v=-0.5
-dfric=0.0 #default 0 
+v=-0.2
+dfric=0.3 #default 0 
 
 n_layer=9
 
