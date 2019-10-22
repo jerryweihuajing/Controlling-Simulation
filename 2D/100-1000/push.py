@@ -2,12 +2,30 @@
 #change to real 2D 
 #1.fix x and fix spin in y z
 #2014-2015 Cai ShengYang @NanJing University
-from yade import pack, ymport
-import math,sys
-sys.path.append('./')
-import get_color_map as Color
-from tool import GenerateFold
+
+import math,sys,os
 import numpy as np
+from yade import pack, ymport
+
+#basic parameters
+case=int(raw_input())
+v=-0.2
+dfric=0.0 #default 0 
+
+n_layer=9
+
+
+def GenerateFold(path):
+
+    path=path.strip()
+   
+    path=path.rstrip("\\")
+
+    Exist=os.path.exists(path)
+
+    if not Exist:
+        
+        os.makedirs(path)
 
 #setting frict materials -----
 fyoung = 8e9 #default:8e9
@@ -25,7 +43,7 @@ rden = 2500
 #setting detachment materials ----- 
 dyoung = 2e7
 dpoisson = 0
-dfrictAng = math.atan(0.0) #default 0
+dfrictAng = math.atan(dfric) 
 dreps = 0.001
 dden = 2100
 
@@ -47,11 +65,6 @@ detachment = O.materials.append(CpmMat(young = dyoung,
                           epsCrackOnset = dreps,
                           density = dden,
                           relDuctility = 0))
-
-#basic parameters
-v=-1
-n_layer=9
-case=4
 
 #adding deposit -----
 sample = ymport.text('./sample.txt')
@@ -85,7 +98,7 @@ for i in spheres:
 	O.bodies[i].state.blockedDOFs='XYz'
 
 #defining engines -----
-savePeriod = int(5000/abs(v)) # save files for every iterPeriod steps
+savePeriod = int(2500/abs(v)) # save files for every iterPeriod steps
 checkPeriod = int(savePeriod/5) #for print
 pre_thres = checkPeriod #for deposition which is not already done
 
@@ -107,13 +120,6 @@ PyRunner(command = 'startPushing()', iterPeriod = checkPeriod, label = 'controll
 
 O.dt =1* utils.PWaveTimeStep()
 
-
-'''
-GenerateFold('./input/case '+str(case)+'/cumulative strain')
-GenerateFold('./input/case '+str(case)+'/periodical strain')
-GenerateFold('./input/case '+str(case)+'/stress')
-'''
-
 TW1 = TesselationWrapper() #TW1 records cumulative strain data
 TW1.setState(0)
 TW1.setState(1)
@@ -125,11 +131,17 @@ TW2.setState(0)
 maxl = max([O.bodies[i].state.pos[0] for i in spheres])
 maxh = max([O.bodies[i].state.pos[1] for i in spheres])
 
-yade_rgb_list=Color.get_color_map('ColorRicebal.txt')[0]
-
-while [] in yade_rgb_list:
-	
-	yade_rgb_list.remove([])
+#yade rgb list
+yade_rgb_list=[ [0.50,0.50,0.50],
+		[1.00,0.00,0.00],
+		[0.00,1.00,0.00],
+		[1.00,1.00,0.00],
+		[0.85,0.85,0.85],
+		[0.00,1.00,1.00],
+		[1.00,0.00,1.00],
+		[0.90,0.90,0.90],
+		[0.15,0.15,0.15],
+		[0.00,0.00,1.00] ]
 
 rgb_list=yade_rgb_list[0:1]+yade_rgb_list[2:]
 
@@ -195,16 +207,17 @@ progress=(offset/box_length)*100
 
 if base_detachment:
 
-	folder_name='base=%.2f' %height_base
+	folder_name='./base detachment/fric=%.1f v=%.1f/input/base=%.2f' %(dfric,abs(v),height_base)
 
 if salt_detachment:
 
-	folder_name='salt=%.2f' %height_salt
+	folder_name='./salt detachment/fric=%.1f v=%.1f/input/salt=%.2f' %(dfric,abs(v),height_base)
+
 
 #Generate Fold
-GenerateFold('./input/'+folder_name)
+GenerateFold(folder_name)
 
-out_file=open('./input/'+folder_name+'/progress='+'%.2f%%' %progress+".txt",'w')
+out_file=open(folder_name+'/progress='+'%.2f%%' %progress+".txt",'w')
 
 for b in sample:
 
@@ -245,16 +258,6 @@ for b in sample:
 O.bodies.append(box)
 O.bodies.append(wall)
 
-#init
-'''
-TW1.setState(1)
-TW1.defToVtk('./input/case '+str(case)+'/cumulative strain/progress='+'%.2f%%' %progress+".vtk")
-
-TW2.setState(1)
-TW2.defToVtk('./input/case '+str(case)+'/periodical strain/progress='+'%.2f%%' %progress+".vtk")
-
-TW2.setState(0)
-'''
 print 'case',case
 
 O.run()
@@ -296,21 +299,11 @@ def stopSimulation():
 
     if O.iter%savePeriod==0:
 
-	'''
-	TW1.setState(1)
-	TW1.defToVtk('./input/case '+str(case)+'/cumulative strain/progress='+'%.2f%%' %progress+".vtk")
-
-	TW2.setState(1)
-	TW2.defToVtk('./input/case '+str(case)+'/periodical strain/progress='+'%.2f%%' %progress+".vtk")
-
-	TW2.setState(0)
-	'''
-
 	TW=TesselationWrapper()
 	TW.computeVolumes()
 	s=bodyStressTensors()
 
-	out_file=open('./input/'+folder_name+'/progress='+'%.2f%%' %progress+".txt",'w')
+	out_file=open(folder_name+'/progress='+'%.2f%%' %progress+".txt",'w')
 
 	for b in sample:
 
