@@ -9,8 +9,8 @@ from yade import pack, ymport
 
 #basic parameters
 case=int(raw_input())
-v=-0.2
-dfric=0.0 #default 0 
+v=-1
+dfric=0.1 #default 0 
 
 n_layer=9
 
@@ -160,8 +160,8 @@ height_base=case*height_step/2
 height_salt=case*height_step/2
 height_rock=maxh-height_base-height_salt
 
-base_detachment=False
-salt_detachment=True
+base_detachment=True
+salt_detachment=False
 
 #so many conditions
 for i in spheres:
