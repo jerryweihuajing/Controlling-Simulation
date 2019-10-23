@@ -9,7 +9,7 @@ from yade import pack, ymport
 
 #basic parameters
 case=int(raw_input())
-v=-0.2
+v=1
 dfric=0.0 #default 0 
 
 n_layer=9
@@ -71,9 +71,12 @@ sample = ymport.text('./sample.txt')
 spheres = O.bodies.append(sample)
 
 #building boxes -----
-box_length = 500.0
+box_length = 700.0
 box_height = 100.0
 box_depth  = 5
+
+#plus length after extension
+box_length_plus=100
 
 #wallMask
 #determines which walls will be created, in the order
@@ -207,11 +210,11 @@ progress=(offset/box_length)*100
 
 if base_detachment:
 
-	folder_name='./push/base detachment/fric=%.1f v=%.1f/input/base=%.2f' %(dfric,abs(v),height_base)
+	folder_name='./pull/base detachment/fric=%.1f v=%.1f/input/base=%.2f' %(dfric,abs(v),height_base)
 
 if salt_detachment:
 
-	folder_name='./push/salt detachment/fric=%.1f v=%.1f/input/salt=%.2f' %(dfric,abs(v),height_base)
+	folder_name='./pull/salt detachment/fric=%.1f v=%.1f/input/salt=%.2f' %(dfric,abs(v),height_base)
 
 
 #Generate Fold
@@ -284,7 +287,7 @@ def stopSimulation():
     
     print 'iter',O.iter
     
-    offset=box_length-wall.state.pos[0] #wall ypos
+    offset=wall.state.pos[0]-box_length #wall ypos
 
     #show where the wall is
     print 'the offset is %.2f' %offset 
