@@ -8,12 +8,11 @@ import numpy as np
 from yade import pack, ymport
 
 #basic parameters
-case=int(raw_input())
-v=1
+case=0
+v=0.1
 dfric=0.0 #default 0 
 
 n_layer=9
-
 
 def GenerateFold(path):
 
@@ -28,14 +27,14 @@ def GenerateFold(path):
         os.makedirs(path)
 
 #setting frict materials -----
-fyoung = 8e9 #default:8e9
-fpoisson = 0.25
+fyoung = 2e8 #default:8e9
+fpoisson = 0.25 #default:0.25
 frictAng = math.atan(0.6)
 fden = 2500
 
 #setting rock materials -----
-ryoung = 2e7
-rpoisson = 0.25
+ryoung = 2e9
+rpoisson = 0.2
 rfrictAng = math.atan(0.6)
 rreps = 0.06
 rden = 2500
@@ -47,17 +46,30 @@ dfrictAng = math.atan(dfric)
 dreps = 0.001
 dden = 2100
 
+#default:0-4 1-8e7
+csnormalCohesion=0e7
+csshearCohesion=0e7
+
 frict = O.materials.append(FrictMat(young = fyoung,
                                 poisson = fpoisson,
                                 frictionAngle = frictAng,
                                 density = fden))
-                                                                       
+'''                                                                    
 rock = O.materials.append(CpmMat(young = ryoung,
                           poisson = rpoisson,
                           frictionAngle = rfrictAng,
                           epsCrackOnset = rreps,
                           density = rden,
                           relDuctility = 0))
+'''
+#from xwq
+rock = O.materials.append(CohFrictMat( young=ryoung,
+                                            poisson=rpoisson,
+                                            density=rden,
+                                            frictionAngle=rfrictAng,
+                                            normalCohesion=csnormalCohesion,
+                                            shearCohesion=csshearCohesion,
+                                            label='spheres'))
 
 detachment = O.materials.append(CpmMat(young = dyoung,
                           poisson = dpoisson,
@@ -66,14 +78,39 @@ detachment = O.materials.append(CpmMat(young = dyoung,
                           density = dden,
                           relDuctility = 0))
 
+'''
+#from xwq
+TENSILESTRENGTH = 4.5e6
+COHESION = 5e6
+wallFrictAng = 0
+baseFrictAng = 0.5
+Enlarge = 1.01
+OUT = 'T%.1f_C%.1f_BA%.1f_WA%.1f_ENLARGE%.2f0%%' % (TENSILESTRENGTH/1e6,COHESION/1e6,baseFrictAng,wallFrictAng,Enlarge)
+
+rock = O.materials.append(JCFpmMat(
+    young = 5e9,
+    poisson = 1.0/3,
+    frictionAngle = math.radians(18),
+    density = 4800,
+    tensileStrength = TENSILESTRENGTH,
+	cohesion = COHESION,
+	))
+
+frict = O.materials.append(JCFpmMat(
+	type = 0,
+    young = 5e13,
+    poisson = 1,
+    frictionAngle = math.radians(wallFrictAng),
+    ))
+'''
 #adding deposit -----
 sample = ymport.text('./sample.txt')
 spheres = O.bodies.append(sample)
 
 #building boxes -----
-box_length = 700.0
+box_length = 200.0
 box_height = 100.0
-box_depth  = 5
+box_depth  = 10
 
 #plus length after extension
 box_length_plus=100
@@ -84,18 +121,35 @@ box_length_plus=100
 #default 63 means to create all walls
 #parameter1:center
 #parameter2:size
-box = geom.facetBox(( box_length/2, box_height/2,0),
-                    ( box_length/2, box_height/2,box_depth/2),
-                    wallMask = 5,
+box = geom.facetBox(( box_length/2+box_length_plus, box_height/2,0),
+                    ( box_length/2+box_length_plus, box_height/2,box_depth/2),
+                    wallMask = 48,
                     material = frict)
+'''
+walls = utils.aabbWalls([(0,0,0),(box_length,box_length,box_length)], thickness = 3)
+#O.bodies.append(walls)
 
+#O.bodies.erase(walls[5].id)
+wall_left= walls[0]
+wall_right= walls[1]
+
+base= walls[3]
+
+wall_left.material = O.materials[frict]
+wall_right.material = O.materials[frict]
+
+'''
 #push plane
-wall = utils.wall(box_length, axis = 0, material = frict)
+wall_right = utils.wall(box_length, axis = 0, material = frict)
+wall_left = utils.wall(0, axis = 0, material = frict)
+
+base = utils.wall(0, axis = 1, material = frict)
 
 #2017-08-05 lichangsheng 
 #change to a real 2D simulation
 # fix spin in y z 
 # fix x-postion  
+
 for i in spheres:
 	#a sphere can be made to move only in the yz plane  and fix spin in Y Z by saying:
 	O.bodies[i].state.blockedDOFs='XYz'
@@ -115,8 +169,22 @@ InteractionLoop(
     ),
 
 NewtonIntegrator(damping = 0.4, gravity = (0,-9.81,0)),
-PyRunner(command = 'startPushing()', iterPeriod = checkPeriod, label = 'controller'),
-]
+PyRunner(command = 'startPushing()', iterPeriod = checkPeriod, label = 'controller'),]
+
+'''
+O.engines = [
+    ForceResetter(),
+    InsertionSortCollider([Bo1_Box_Aabb(),Bo1_Facet_Aabb(),Bo1_Sphere_Aabb(aabbEnlargeFactor=Enlarge,label='EF')]),
+	InteractionLoop(
+		[Ig2_Sphere_Sphere_ScGeom(interactionDetectionFactor=Enlarge,label='DF'),Ig2_Box_Sphere_ScGeom(),Ig2_Facet_Sphere_ScGeom()],
+		[Ip2_JCFpmMat_JCFpmMat_JCFpmPhys(cohesiveTresholdIteration=1,label='interactionPhys')],
+		[Law2_ScGeom_JCFpmPhys_JointedCohesiveFrictionalPM(recordCracks=False,Key=OUT,label='interactionLaw')]
+	),
+    GlobalStiffnessTimeStepper(active=1, timeStepUpdateInterval=100, timestepSafetyCoefficient=0.5),
+    NewtonIntegrator(damping = 0.4, gravity = (0,0,-9.81)),
+    PyRunner(command = 'startPushing()', iterPeriod = checkPeriod, label = 'controller'),
+    ]
+'''
 
 #snapshot = qt.SnapshotEngine(fileBase='-',iterPeriod=savePeriod)
 #vtkRecorder = VTKRecorder(fileName='0.00%-',recorders=['all'],iterPeriod=savePeriod)
@@ -146,7 +214,7 @@ yade_rgb_list=[ [0.50,0.50,0.50],
 		[0.15,0.15,0.15],
 		[0.00,0.00,1.00] ]
 
-rgb_list=yade_rgb_list[0:1]+yade_rgb_list[2:]
+rgb_list=yade_rgb_list[-2:-1]+yade_rgb_list[4:5]
 
 #proper number of layer
 while len(rgb_list)<n_layer:
@@ -159,12 +227,13 @@ rgb_detachment=yade_rgb_list[1]
 height_step=maxh/(n_layer)
 
 #thickness
-height_base=case*height_step/2
+height_ba
+se=case*height_step/2
 height_salt=case*height_step/2
 height_rock=maxh-height_base-height_salt
 
 base_detachment=False
-salt_detachment=True
+salt_detachment=False
 
 #so many conditions
 for i in spheres:
@@ -205,16 +274,18 @@ TW=TesselationWrapper()
 TW.computeVolumes()
 stress=bodyStressTensors()
 
-offset=box_length-wall.state.pos[0] #wall ypos
+offset=wall_right.state.pos[0]-wall_left.state.pos[0]-box_length #wall ypos
 progress=(offset/box_length)*100
+
+folder_name='./extension/v=%.1f/input' %(abs(v))
 
 if base_detachment:
 
-	folder_name='./pull/base detachment/fric=%.1f v=%.1f/input/base=%.2f' %(dfric,abs(v),height_base)
+	folder_name='./extension/base detachment/fric=%.1f v=%.1f/input/base=%.2f' %(dfric,abs(v),height_base)
 
 if salt_detachment:
 
-	folder_name='./pull/salt detachment/fric=%.1f v=%.1f/input/salt=%.2f' %(dfric,abs(v),height_base)
+	folder_name='./extension/salt detachment/fric=%.1f v=%.1f/input/salt=%.2f' %(dfric,abs(v),height_base)
 
 
 #Generate Fold
@@ -258,8 +329,12 @@ for b in sample:
 
     out_file.write('\n')
 
-O.bodies.append(box)
-O.bodies.append(wall)
+#O.bodies.append(box)
+
+O.bodies.append(wall_left)
+O.bodies.append(wall_right)
+
+O.bodies.append(base)
 
 print 'case',case
 
@@ -271,7 +346,10 @@ def startPushing():
     if O.iter < pre_thres:
         return
 
-    wall.state.vel = Vector3( v, 0,0)
+    wall_left.state.vel = Vector3(0, 0,0)
+    wall_right.state.vel = Vector3( v, 0,0)
+    base.state.vel = Vector3( v, 0,0)
+
     controller.command = 'stopSimulation()'
 
     O.engines = O.engines
@@ -287,7 +365,7 @@ def stopSimulation():
     
     print 'iter',O.iter
     
-    offset=wall.state.pos[0]-box_length #wall ypos
+    offset=wall_right.state.pos[0]-wall_left.state.pos[0]-box_length #wall ypos
 
     #show where the wall is
     print 'the offset is %.2f' %offset 
