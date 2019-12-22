@@ -8,9 +8,9 @@ import numpy as np
 from yade import pack, ymport
 
 #basic parameters
-case=4
+case=int(raw_input())
 v=-1
-dfric=0.3 #default 0 
+dfric=0.1 #default 0 
 
 n_layer=9
 
@@ -207,11 +207,11 @@ progress=(offset/box_length)*100
 
 if base_detachment:
 
-	folder_name='./base detachment/fric=%.1f v=%.1f/input/base=%.2f' %(dfric,abs(v),height_base)
+	folder_name='./push/base detachment/fric=%.1f v=%.1f/input/base=%.2f' %(dfric,abs(v),height_base)
 
 if salt_detachment:
 
-	folder_name='./base detachment/fric=%.1f v=%.1f/input/salt=%.2f' %(dfric,abs(v),height_base)
+	folder_name='./push/salt detachment/fric=%.1f v=%.1f/input/salt=%.2f' %(dfric,abs(v),height_base)
 
 
 #Generate Fold

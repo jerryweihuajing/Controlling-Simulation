@@ -91,9 +91,7 @@ O.engines = [
     
 O.dt = utils.PWaveTimeStep()
 
-ratio=12
-    
-threshold_height=box_length/ratio
+O.run()
 
 def modifyLayer():
     if O.iter < thres:

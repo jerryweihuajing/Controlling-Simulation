@@ -1,0 +1,23 @@
+CELLS 0 0
+CELL_TYPES 0
+
+SCALARS Volumetric_strain float 1
+LOOKUP_TABLE default
+
+SCALARS Shear_strain float 1
+LOOKUP_TABLE default
+SCALARS Volumetric_strain float 1
+LOOKUP_TABLE default
+
+SCALARS Shear_strain float 1
+LOOKUP_TABLE default
+SCALARS Volumetric_strain float 1
+LOOKUP_TABLE default
+
+SCALARS Shear_strain float 1
+LOOKUP_TABLE default
+SCALARS Volumetric_strain float 1
+LOOKUP_TABLE default
+
+SCALARS Shear_strain float 1
+LOOKUP_TABLE default
