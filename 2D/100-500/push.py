@@ -9,10 +9,9 @@ from yade import pack, ymport
 
 #basic parameters
 case=int(raw_input())
-v=-1
-dfric=0.1 #default 0 
-
-n_layer=9
+v=-0.4 #default 0.4
+dfric=0.0 #default 0 
+n_layer=10
 
 
 def GenerateFold(path):
@@ -34,7 +33,7 @@ frictAng = math.atan(0.6)
 fden = 2500
 
 #setting rock materials -----
-ryoung = 2e7
+ryoung = 2e7 #2e7
 rpoisson = 0.25
 rfrictAng = math.atan(0.6)
 rreps = 0.06
@@ -143,7 +142,7 @@ yade_rgb_list=[ [0.50,0.50,0.50],
 		[0.15,0.15,0.15],
 		[0.00,0.00,1.00] ]
 
-rgb_list=yade_rgb_list[0:1]+yade_rgb_list[2:]
+rgb_list=yade_rgb_list[-2:-1]+yade_rgb_list[4:5]
 
 #proper number of layer
 while len(rgb_list)<n_layer:
@@ -207,11 +206,11 @@ progress=(offset/box_length)*100
 
 if base_detachment:
 
-	folder_name='./push/base detachment/fric=%.1f v=%.1f/input/base=%.2f' %(dfric,abs(v),height_base)
+	folder_name='./base detachment/fric=%.1f v=%.1f/input/base=%.2f' %(dfric,abs(v),height_base)
 
 if salt_detachment:
 
-	folder_name='./push/salt detachment/fric=%.1f v=%.1f/input/salt=%.2f' %(dfric,abs(v),height_base)
+	folder_name='./salt detachment/fric=%.1f v=%.1f/input/salt=%.2f' %(dfric,abs(v),height_base)
 
 
 #Generate Fold
