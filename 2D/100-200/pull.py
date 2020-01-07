@@ -9,7 +9,7 @@ from yade import pack, ymport
 
 #basic parameters
 case=0
-v=0.1	
+v=0.2
 
 n_layer=10
 
@@ -40,8 +40,8 @@ rden = 2500 #2500
 
 
 #default:0-4 1-8e7
-csnormalCohesion=2e7 #1
-csshearCohesion=4e7 #2
+csnormalCohesion=4e7 #1
+csshearCohesion=8e7 #2
 
 frict = O.materials.append(FrictMat(young = fyoung,
                                 poisson = fpoisson,
@@ -348,7 +348,7 @@ def stopSimulation():
 
 	    out_file.write('\n')
 
-    if progress/100 > 0.2:
+    if progress/100 > 0.5:
 
 	O.pause()    
  

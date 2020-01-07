@@ -29,7 +29,7 @@ def GenerateFold(path):
 #setting frict materials -----
 fyoung = 8e9
 fpoisson = 0.25
-frictAng = 0
+frictAng = 0 #0
 fden = 2500
 
 #setting rock materials -----
