@@ -9,10 +9,9 @@ from yade import pack, ymport
 
 #basic parameters
 case=0
-v=0.1
-dfric=0.0 #default 0 
+v=0.1	
 
-n_layer=9
+n_layer=10
 
 def GenerateFold(path):
 
@@ -27,41 +26,28 @@ def GenerateFold(path):
         os.makedirs(path)
 
 #setting frict materials -----
-fyoung = 2e8 #default:8e9
-fpoisson = 0.25 #default:0.25
-frictAng = math.atan(0.6)
+fyoung = 9e10 #8e9
+fpoisson = 0.25
+frictAng = 0
 fden = 2500
 
 #setting rock materials -----
-ryoung = 2e9
-rpoisson = 0.2
+ryoung = 2e7 #2e7
+rpoisson = 0.25
 rfrictAng = math.atan(0.6)
 rreps = 0.06
-rden = 2500
+rden = 2500 #2500
 
-#setting detachment materials ----- 
-dyoung = 2e7
-dpoisson = 0
-dfrictAng = math.atan(dfric) 
-dreps = 0.001
-dden = 2100
 
 #default:0-4 1-8e7
-csnormalCohesion=0e7
-csshearCohesion=0e7
+csnormalCohesion=2e7 #1
+csshearCohesion=4e7 #2
 
 frict = O.materials.append(FrictMat(young = fyoung,
                                 poisson = fpoisson,
                                 frictionAngle = frictAng,
                                 density = fden))
-'''                                                                    
-rock = O.materials.append(CpmMat(young = ryoung,
-                          poisson = rpoisson,
-                          frictionAngle = rfrictAng,
-                          epsCrackOnset = rreps,
-                          density = rden,
-                          relDuctility = 0))
-'''
+
 #from xwq
 rock = O.materials.append(CohFrictMat( young=ryoung,
                                             poisson=rpoisson,
@@ -71,45 +57,14 @@ rock = O.materials.append(CohFrictMat( young=ryoung,
                                             shearCohesion=csshearCohesion,
                                             label='spheres'))
 
-detachment = O.materials.append(CpmMat(young = dyoung,
-                          poisson = dpoisson,
-                          frictionAngle = dfrictAng,
-                          epsCrackOnset = dreps,
-                          density = dden,
-                          relDuctility = 0))
 
-'''
-#from xwq
-TENSILESTRENGTH = 4.5e6
-COHESION = 5e6
-wallFrictAng = 0
-baseFrictAng = 0.5
-Enlarge = 1.01
-OUT = 'T%.1f_C%.1f_BA%.1f_WA%.1f_ENLARGE%.2f0%%' % (TENSILESTRENGTH/1e6,COHESION/1e6,baseFrictAng,wallFrictAng,Enlarge)
-
-rock = O.materials.append(JCFpmMat(
-    young = 5e9,
-    poisson = 1.0/3,
-    frictionAngle = math.radians(18),
-    density = 4800,
-    tensileStrength = TENSILESTRENGTH,
-	cohesion = COHESION,
-	))
-
-frict = O.materials.append(JCFpmMat(
-	type = 0,
-    young = 5e13,
-    poisson = 1,
-    frictionAngle = math.radians(wallFrictAng),
-    ))
-'''
 #adding deposit -----
 sample = ymport.text('./sample.txt')
 spheres = O.bodies.append(sample)
 
 #building boxes -----
 box_length = 200.0
-box_height = 100.0
+box_height = 150.0
 box_depth  = 10
 
 #plus length after extension
@@ -125,20 +80,7 @@ box = geom.facetBox(( box_length/2+box_length_plus, box_height/2,0),
                     ( box_length/2+box_length_plus, box_height/2,box_depth/2),
                     wallMask = 48,
                     material = frict)
-'''
-walls = utils.aabbWalls([(0,0,0),(box_length,box_length,box_length)], thickness = 3)
-#O.bodies.append(walls)
 
-#O.bodies.erase(walls[5].id)
-wall_left= walls[0]
-wall_right= walls[1]
-
-base= walls[3]
-
-wall_left.material = O.materials[frict]
-wall_right.material = O.materials[frict]
-
-'''
 #push plane
 wall_right = utils.wall(box_length, axis = 0, material = frict)
 wall_left = utils.wall(0, axis = 0, material = frict)
@@ -170,21 +112,6 @@ InteractionLoop(
 
 NewtonIntegrator(damping = 0.4, gravity = (0,-9.81,0)),
 PyRunner(command = 'startPushing()', iterPeriod = checkPeriod, label = 'controller'),]
-
-'''
-O.engines = [
-    ForceResetter(),
-    InsertionSortCollider([Bo1_Box_Aabb(),Bo1_Facet_Aabb(),Bo1_Sphere_Aabb(aabbEnlargeFactor=Enlarge,label='EF')]),
-	InteractionLoop(
-		[Ig2_Sphere_Sphere_ScGeom(interactionDetectionFactor=Enlarge,label='DF'),Ig2_Box_Sphere_ScGeom(),Ig2_Facet_Sphere_ScGeom()],
-		[Ip2_JCFpmMat_JCFpmMat_JCFpmPhys(cohesiveTresholdIteration=1,label='interactionPhys')],
-		[Law2_ScGeom_JCFpmPhys_JointedCohesiveFrictionalPM(recordCracks=False,Key=OUT,label='interactionLaw')]
-	),
-    GlobalStiffnessTimeStepper(active=1, timeStepUpdateInterval=100, timestepSafetyCoefficient=0.5),
-    NewtonIntegrator(damping = 0.4, gravity = (0,0,-9.81)),
-    PyRunner(command = 'startPushing()', iterPeriod = checkPeriod, label = 'controller'),
-    ]
-'''
 
 #snapshot = qt.SnapshotEngine(fileBase='-',iterPeriod=savePeriod)
 #vtkRecorder = VTKRecorder(fileName='0.00%-',recorders=['all'],iterPeriod=savePeriod)
@@ -227,8 +154,7 @@ rgb_detachment=yade_rgb_list[1]
 height_step=maxh/(n_layer)
 
 #thickness
-height_ba
-se=case*height_step/2
+height_base=case*height_step/2
 height_salt=case*height_step/2
 height_rock=maxh-height_base-height_salt
 
@@ -346,9 +272,9 @@ def startPushing():
     if O.iter < pre_thres:
         return
 
-    wall_left.state.vel = Vector3(0, 0,0)
+    wall_left.state.vel = Vector3(-v, 0,0)
     wall_right.state.vel = Vector3( v, 0,0)
-    base.state.vel = Vector3( v, 0,0)
+    base.state.vel = Vector3( 0, 0,0)
 
     controller.command = 'stopSimulation()'
 
@@ -422,7 +348,7 @@ def stopSimulation():
 
 	    out_file.write('\n')
 
-    if progress/100 > 0.3:
+    if progress/100 > 0.2:
 
 	O.pause()    
  
