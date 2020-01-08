@@ -9,7 +9,7 @@ from yade import pack, ymport
 
 #basic parameters
 case=int(raw_input())
-v=-0.4 #default 0.4
+v=-0.4		 #default 0.4
 dfric=0.0 #default 0 
 n_layer=10
 
@@ -33,18 +33,18 @@ frictAng = 0 #0
 fden = 2500
 
 #setting rock materials -----
-ryoung = 2e7 #2e7
+ryoung = 2e7 #csy: 2e7 fyj: 2e8
 rpoisson = 0.25
-rfrictAng = math.atan(0.6)
+rfrictAng = math.atan(0.6) #csy: 0.6 fyj: 0.3
 rreps = 0.06
 rden = 2500 #2500
 
 #setting detachment materials ----- 
-dyoung = 2e7
+dyoung = 2e7 #csy: 2e7 fyj: 2e8
 dpoisson = 0
 dfrictAng = math.atan(dfric) 
 dreps = 0.001
-dden = 2100 #2100
+dden = 2100 #csy: 2100 fyj:2300
 
 frict = O.materials.append(FrictMat(young = fyoung,
                                 poisson = fpoisson,
@@ -340,7 +340,7 @@ def stopSimulation():
 
 	    out_file.write('\n')
 
-    if progress/100 > 0.3:
+    if progress/100 > 0.25:
 
 	O.pause()    
  

@@ -26,22 +26,22 @@ def GenerateFold(path):
         os.makedirs(path)
 
 #setting frict materials -----
-fyoung = 9e10 #8e9
+fyoung = 8e9 #8e9
 fpoisson = 0.25
 frictAng = 0
 fden = 2500
 
 #setting rock materials -----
-ryoung = 2e7 #2e7
+ryoung = 2e7 #csy: 2e7 fyj: 2e8
 rpoisson = 0.25
-rfrictAng = math.atan(0.6)
+rfrictAng = math.atan(0.6) #csy: 0.6 fyj: 0.3
 rreps = 0.06
 rden = 2500 #2500
 
 
 #default:0-4 1-8e7
-csnormalCohesion=4e7 #1
-csshearCohesion=8e7 #2
+csnormalCohesion=2e7 #2
+csshearCohesion=4e7 #4
 
 frict = O.materials.append(FrictMat(young = fyoung,
                                 poisson = fpoisson,
