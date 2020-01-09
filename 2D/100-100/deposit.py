@@ -35,8 +35,8 @@ temp_con = O.materials.append(CpmMat(
     relDuctility = 0))
                                     
 #building boxes -----
-box_length = 200.0
-box_height = 150.0
+box_length = 100.0
+box_height = 180.0
 box_depth  = 5
 
 #wallMask
@@ -61,7 +61,7 @@ O.bodies.append(wall)
 #adding deposit -----
 sample_height = box_height #not the final thickness 
 sample = pack.SpherePack()
-sample.makeCloud((0.0, 0.0, 0.0), ( box_length, sample_height,0), rMean = 0.75, rRelFuzz = 0.15)
+sample.makeCloud((0.0, 0.0, 0.0), ( box_length, sample_height,0), rMean = 0.6, rRelFuzz = 0.15)
 s = sample.toSimulation(material = temp_con)
 
 #2019-01-19 weihuajing

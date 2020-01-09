@@ -10,8 +10,9 @@ from yade import pack, ymport
 #basic parameters
 case=0
 v=0.2
-
 n_layer=10
+
+direction='double'
 
 def GenerateFold(path):
 
@@ -63,8 +64,8 @@ sample = ymport.text('./sample.txt')
 spheres = O.bodies.append(sample)
 
 #building boxes -----
-box_length = 200.0
-box_height = 150.0
+box_length = 100.0
+box_height = 100.0
 box_depth  = 10
 
 #plus length after extension
@@ -78,7 +79,7 @@ box_length_plus=100
 #parameter2:size
 box = geom.facetBox(( box_length/2+box_length_plus, box_height/2,0),
                     ( box_length/2+box_length_plus, box_height/2,box_depth/2),
-                    wallMask = 48,
+                    wallMask = 0,
                     material = frict)
 
 #push plane
@@ -97,7 +98,7 @@ for i in spheres:
 	O.bodies[i].state.blockedDOFs='XYz'
 
 #defining engines -----
-savePeriod = int(2500/abs(v)) # save files for every iterPeriod steps
+savePeriod = int(1600/abs(v)) # save files for every iterPeriod steps
 checkPeriod = int(savePeriod/5) #for print
 pre_thres = checkPeriod #for deposition which is not already done
 
@@ -203,16 +204,7 @@ stress=bodyStressTensors()
 offset=wall_right.state.pos[0]-wall_left.state.pos[0]-box_length #wall ypos
 progress=(offset/box_length)*100
 
-folder_name='./extension/v=%.1f/input' %(abs(v))
-
-if base_detachment:
-
-	folder_name='./extension/base detachment/fric=%.1f v=%.1f/input/base=%.2f' %(dfric,abs(v),height_base)
-
-if salt_detachment:
-
-	folder_name='./extension/salt detachment/fric=%.1f v=%.1f/input/salt=%.2f' %(dfric,abs(v),height_base)
-
+folder_name='./extension/input'
 
 #Generate Fold
 GenerateFold(folder_name)
@@ -272,9 +264,19 @@ def startPushing():
     if O.iter < pre_thres:
         return
 
-    wall_left.state.vel = Vector3(-v, 0,0)
-    wall_right.state.vel = Vector3( v, 0,0)
-    base.state.vel = Vector3( 0, 0,0)
+    if direction=='double':
+
+	wall_left.state.vel = Vector3(-v/2, 0,0)
+    	wall_right.state.vel = Vector3( v/2, 0,0)
+
+    	base.state.vel = Vector3( 0, 0,0)
+
+    if direction=='single':
+
+	wall_left.state.vel = Vector3( 0, 0,0)
+    	wall_right.state.vel = Vector3( v, 0,0)
+
+    	base.state.vel = Vector3( v, 0,0)
 
     controller.command = 'stopSimulation()'
 

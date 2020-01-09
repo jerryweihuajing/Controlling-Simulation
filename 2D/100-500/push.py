@@ -9,10 +9,11 @@ from yade import pack, ymport
 
 #basic parameters
 case=int(raw_input())
-v=-0.4		 #default 0.4
+v= 0.4		 #default 0.4
 dfric=0.0 #default 0 
 n_layer=10
 
+direction='single'
 
 def GenerateFold(path):
 
@@ -40,7 +41,7 @@ rreps = 0.06
 rden = 2500 #2500
 
 #setting detachment materials ----- 
-dyoung = 2e7 #csy: 2e7 fyj: 2e8
+dyoung = 2e8 #csy: 2e7 fyj: 2e8
 dpoisson = 0
 dfrictAng = math.atan(dfric) 
 dreps = 0.001
@@ -82,11 +83,14 @@ box_depth  = 5
 #parameter2:size
 box = geom.facetBox(( box_length/2, box_height/2,0),
                     ( box_length/2, box_height/2,box_depth/2),
-                    wallMask = 5,
+                    wallMask = 0,
                     material = frict)
 
 #push plane
-wall = utils.wall(box_length, axis = 0, material = frict)
+wall_right = utils.wall(box_length, axis = 0, material = frict)
+wall_left = utils.wall(0, axis = 0, material = frict)
+
+base = utils.wall(0, axis = 1, material = frict)
 
 #2017-08-05 lichangsheng 
 #change to a real 2D simulation
@@ -97,7 +101,7 @@ for i in spheres:
 	O.bodies[i].state.blockedDOFs='XYz'
 
 #defining engines -----
-savePeriod = int(2500/abs(v)) # save files for every iterPeriod steps
+savePeriod = int(12000/abs(v)) # save files for every iterPeriod steps
 checkPeriod = int(savePeriod/5) #for print
 pre_thres = checkPeriod #for deposition which is not already done
 
@@ -201,17 +205,10 @@ TW=TesselationWrapper()
 TW.computeVolumes()
 stress=bodyStressTensors()
 
-offset=box_length-wall.state.pos[0] #wall ypos
+offset=box_length-(wall_right.state.pos[0]-wall_left.state.pos[0]) #wall ypos
 progress=(offset/box_length)*100
 
-if base_detachment:
-
-	folder_name='./base detachment/fric=%.1f v=%.1f/input/base=%.2f' %(dfric,abs(v),height_base)
-
-if salt_detachment:
-
-	folder_name='./salt detachment/fric=%.1f v=%.1f/input/salt=%.2f' %(dfric,abs(v),height_base)
-
+folder_name='./compression/input'
 
 #Generate Fold
 GenerateFold(folder_name)
@@ -255,7 +252,9 @@ for b in sample:
     out_file.write('\n')
 
 O.bodies.append(box)
-O.bodies.append(wall)
+O.bodies.append(wall_right)
+O.bodies.append(wall_left)
+O.bodies.append(base)
 
 print 'case',case
 
@@ -267,7 +266,20 @@ def startPushing():
     if O.iter < pre_thres:
         return
 
-    wall.state.vel = Vector3( v, 0,0)
+    if direction=='double':
+
+	wall_left.state.vel = Vector3( v/2, 0,0)
+	wall_right.state.vel = Vector3( -v/2, 0,0)
+
+	base.state.vel = Vector3( 0, 0,0)
+
+    if direction=='single':
+
+	wall_left.state.vel = Vector3( 0, 0,0)
+	wall_right.state.vel = Vector3( -v, 0,0)
+
+	base.state.vel = Vector3( -v, 0,0)
+
     controller.command = 'stopSimulation()'
 
     O.engines = O.engines
@@ -283,7 +295,7 @@ def stopSimulation():
     
     print 'iter',O.iter
     
-    offset=box_length-wall.state.pos[0] #wall ypos
+    offset=box_length-(wall_right.state.pos[0]-wall_left.state.pos[0]) #wall ypos
 
     #show where the wall is
     print 'the offset is %.2f' %offset 
@@ -340,7 +352,7 @@ def stopSimulation():
 
 	    out_file.write('\n')
 
-    if progress/100 > 0.25:
+    if progress/100 > 0.3:
 
 	O.pause()    
  
