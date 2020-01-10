@@ -9,7 +9,7 @@ from yade import pack, ymport
 
 #basic parameters
 case=0
-v=0.2
+v=2
 n_layer=10
 
 direction='double'
@@ -58,10 +58,11 @@ rock = O.materials.append(CohFrictMat( young=ryoung,
                                             shearCohesion=csshearCohesion,
                                             label='spheres'))
 
-
 #adding deposit -----
-sample = ymport.text('./sample.txt')
-spheres = O.bodies.append(sample)
+spheres = ymport.text('./sample.txt')
+
+#list object
+id_spheres = O.bodies.append(spheres)
 
 #building boxes -----
 box_length = 100.0
@@ -93,7 +94,8 @@ base = utils.wall(0, axis = 1, material = frict)
 # fix spin in y z 
 # fix x-postion  
 
-for i in spheres:
+for i in id_spheres:
+
 	#a sphere can be made to move only in the yz plane  and fix spin in Y Z by saying:
 	O.bodies[i].state.blockedDOFs='XYz'
 
@@ -127,8 +129,8 @@ TW1.setState(1)
 TW2 = TesselationWrapper() #TW2 records periodical strain data
 TW2.setState(0)
 
-maxl = max([O.bodies[i].state.pos[0] for i in spheres])
-maxh = max([O.bodies[i].state.pos[1] for i in spheres])
+maxl = max([O.bodies[i].state.pos[0] for i in id_spheres])
+maxh = max([O.bodies[i].state.pos[1] for i in id_spheres])
 
 #yade rgb list
 yade_rgb_list=[ [0.50,0.50,0.50],
@@ -163,7 +165,7 @@ base_detachment=False
 salt_detachment=False
 
 #so many conditions
-for i in spheres:
+for i in id_spheres:
 
 	#O.bodies[i].state.blockedDOFs='XYz'
 
@@ -174,23 +176,6 @@ for i in spheres:
 
 			O.bodies[i].shape.color = rgb_list[k]
 			O.bodies[i].material = O.materials[rock]
-
-		#base detachment
-		if base_detachment:
-
-			if 0<=O.bodies[i].state.pos[1]<=height_base:
-
-				O.bodies[i].shape.color = rgb_detachment
-				O.bodies[i].material = O.materials[detachment]
-
-
-		#salt detachment
-		if salt_detachment:
-
-			if maxh/2-height_salt/2<=O.bodies[i].state.pos[1]<=maxh/2+height_salt/2:
-		
-				O.bodies[i].shape.color = rgb_detachment
-				O.bodies[i].material = O.materials[detachment]
 
 	
 print "The max height is %.3f" % maxh
@@ -211,41 +196,50 @@ GenerateFold(folder_name)
 
 out_file=open(folder_name+'/progress='+'%.2f%%' %progress+".txt",'w')
 
-for b in sample:
+def RecordData(out_file,which_spheres):
 
-    this_stress=stress[b.id]*4.*pi/3.*b.shape.radius**3/TW.volume(b.id)
+	#TW records stress data
+	TW=TesselationWrapper()
+	TW.computeVolumes()
+	stress=bodyStressTensors()
 
-    #print(this_stress)
-    
-    #id
-    out_file.write(str(b.id))  
-    out_file.write(',')
+	for this_sphere in which_spheres:
 
-    #radius
-    out_file.write(str(b.shape.radius))
+	    this_stress=stress[this_sphere.id]*4.*pi/3.*this_sphere.shape.radius**3/TW.volume(this_sphere.id)
 
-    #color
-    for this_color in b.shape.color:
+	    #print(this_stress)
+	    
+	    #id
+	    out_file.write(str(this_sphere.id))  
+	    out_file.write(',')
 
-        out_file.write(',')
+	    #radius
+	    out_file.write(str(this_sphere.shape.radius))
 
-        out_file.write(str(this_color))
-    
-    #position
-    for this_pos in b.state.pos:
+	    #color
+	    for this_color in this_sphere.shape.color:
 
-        out_file.write(',')
+		out_file.write(',')
 
-        out_file.write(str(this_pos))
+		out_file.write(str(this_color))
+	    
+	    #position
+	    for this_pos in this_sphere.state.pos:
 
-    for this_line in this_stress:
+		out_file.write(',')
 
-	for this_str in this_line:
+		out_file.write(str(this_pos))
 
-    	     out_file.write(',')
-   	     out_file.write(str(this_str))
+	    for this_line in this_stress:
 
-    out_file.write('\n')
+		for this_str in this_line:
+
+	    	     out_file.write(',')
+	   	     out_file.write(str(this_str))
+
+	    out_file.write('\n')
+
+RecordData(out_file,spheres)
 
 #O.bodies.append(box)
 
@@ -278,7 +272,7 @@ def startPushing():
 
     	base.state.vel = Vector3( v, 0,0)
 
-    controller.command = 'stopSimulation()'
+    controller.command = 'stopSimulation(spheres)'
 
     O.engines = O.engines
 
@@ -287,7 +281,8 @@ def startPushing():
 
 #flag = 1 #judging whether to save data. 1 is yes, 0 is no
 #count = 0 #for indicating the progress of simulation
-def stopSimulation():
+def stopSimulation(spheres):
+
     #global flag
     #global count
     
@@ -308,47 +303,25 @@ def stopSimulation():
 
     if O.iter%savePeriod==0:
 
-	TW=TesselationWrapper()
-	TW.computeVolumes()
-	s=bodyStressTensors()
-
 	out_file=open(folder_name+'/progress='+'%.2f%%' %progress+".txt",'w')
 
-	for b in sample:
+	print
+	print 'amount of spheres:',len(spheres)
+	print 'amount of bodies:',len(O.bodies)
+	RecordData(out_file,spheres)
+	
+	#adding deposit -----
+	deposit_thickness = height_step #not the final thickness 
+	deposit = pack.SpherePack()
+	deposit.makeCloud((wall_left.state.pos[0], maxh, 0.0), ( wall_right.state.pos[0]-wall_left.state.pos[0], maxh+2*deposit_thickness,0), rMean = 0.6, rRelFuzz = 0.15)
+	deposit.toSimulation(material = rock)
 
-	    this_stress=s[b.id]*4.*pi/3.*b.shape.radius**3/TW.volume(b.id)
+	'''out of range!'''
+	spheres_deposit=[O.bodies[this_id] for this_id in range(len(O.bodies),len(O.bodies)+len(deposit))]
 
-	    #print(this_stress)
-	    
-	    #id
-	    out_file.write(str(b.id))
-	    out_file.write(',')
+	print 'amount of deposit',len(deposit)
 
-	    #radius
-	    out_file.write(str(b.shape.radius))
-
-	    #color
-	    for this_color in b.shape.color:
-
-	        out_file.write(',')
-
-	        out_file.write(str(this_color))
-	    
-	    #position
-	    for this_pos in b.state.pos:
-
-	        out_file.write(',')
-
-	        out_file.write(str(this_pos))
-
-	    for this_line in this_stress:
-
-		for this_str in this_line:
-
-	    	     out_file.write(',')
-	   	     out_file.write(str(this_str))
-
-	    out_file.write('\n')
+	spheres+=spheres_deposit
 
     if progress/100 > 0.5:
 
