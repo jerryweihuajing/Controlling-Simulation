@@ -69,17 +69,14 @@ box_length = 100.0
 box_height = 100.0
 box_depth  = 10
 
-#plus length after extension
-box_length_plus=100
-
 #wallMask
 #determines which walls will be created, in the order
 #-x(1), +x (2), -y (4), +y (8), -z (16), +z (32). The numbers are ANDed; the
 #default 63 means to create all walls
 #parameter1:center
 #parameter2:size
-box = geom.facetBox(( box_length/2+box_length_plus, box_height/2,0),
-                    ( box_length/2+box_length_plus, box_height/2,box_depth/2),
+box = geom.facetBox(( box_length/2, box_height/2,0),
+                    ( box_length/2, box_height/2,box_depth/2),
                     wallMask = 0,
                     material = frict)
 
@@ -160,9 +157,6 @@ height_step=maxh/(n_layer)
 height_base=case*height_step/2
 height_salt=case*height_step/2
 height_rock=maxh-height_base-height_salt
-
-base_detachment=False
-salt_detachment=False
 
 #so many conditions
 for i in id_spheres:
@@ -278,7 +272,6 @@ def startPushing():
 
     #[snap] [VTK][vtkRecorder]
     
-
 #flag = 1 #judging whether to save data. 1 is yes, 0 is no
 #count = 0 #for indicating the progress of simulation
 def stopSimulation(spheres):
@@ -313,16 +306,26 @@ def stopSimulation(spheres):
 	#adding deposit -----
 	deposit_thickness = height_step #not the final thickness 
 	deposit = pack.SpherePack()
-	deposit.makeCloud((wall_left.state.pos[0], maxh, 0.0), ( wall_right.state.pos[0]-wall_left.state.pos[0], maxh+2*deposit_thickness,0), rMean = 0.6, rRelFuzz = 0.15)
+	deposit.makeCloud((-0.5*box_length, 1.2*maxh, 0.0), ( 1.5*box_length, 1.2*maxh+1.5*deposit_thickness,0), rMean = 0.6, rRelFuzz = 0.15)
 	deposit.toSimulation(material = rock)
 
-	'''out of range!'''
-	spheres_deposit=[O.bodies[this_id] for this_id in range(len(O.bodies),len(O.bodies)+len(deposit))]
-
 	print 'amount of deposit',len(deposit)
+	spheres_deposit=[O.bodies[idx] for idx in range(len(O.bodies)-len(deposit),len(O.bodies))]
 
+	'''???'''
+	for ix in spheres_deposit:
+
+	    if O.bodies[ix].state.pos[0] < wall_right.state.pos[0] or O.bodies[ix].state.pos[0]>wall_left.state.pos[0]:
+		print ix
+   	 	#delete spheres that are above the target height
+            	O.bodies.erase(len(O.bodies)-len(deposit)+ix) 
+
+	    	#also,delete the corresponding ids in the id list
+            	spheres_deposit.remove(ix) 	
+	
+	#collect spheres
 	spheres+=spheres_deposit
-
+    
     if progress/100 > 0.5:
 
 	O.pause()    
