@@ -61,7 +61,7 @@ O.bodies.append(wall)
 #adding deposit -----
 sample_height = box_height #not the final thickness 
 sample = pack.SpherePack()
-sample.makeCloud((0.0, 0.0, 0.0), ( box_length, sample_height,0), rMean = 0.6, rRelFuzz = 0.15)
+sample.makeCloud((0.0, 0.0, 0.0), ( box_length, sample_height,0), rMean = 0.6, rRelFuzz = 0.12)
 s = sample.toSimulation(material = temp_con)
 
 #2019-01-19 weihuajing
@@ -99,7 +99,7 @@ def modifyLayer():
 
     if O.iter > thres:
         O.pause()
-
+ 
     for i in s:
         if O.bodies[i].state.pos[1] > box_height or O.bodies[i].state.pos[0]>box_length:
 
@@ -107,8 +107,8 @@ def modifyLayer():
             O.bodies.erase(i) 
 
 	    #also,delete the corresponding ids in the id list
-            s.remove(i) 	    
-            
+            s.remove(i) 
+   
     export.text('sample.txt')   
         
 

@@ -4,12 +4,12 @@
 #2014-2015 Cai ShengYang @NanJing University
 
 import math,sys,os
+import copy as cp
 import numpy as np
 from yade import pack, ymport
 
 #basic parameters
-case=0
-v=2
+v=.2 #0.2
 n_layer=10
 
 direction='double'
@@ -39,7 +39,6 @@ rfrictAng = math.atan(0.6) #csy: 0.6 fyj: 0.3
 rreps = 0.06
 rden = 2500 #2500
 
-
 #default:0-4 1-8e7
 csnormalCohesion=2e7 #2
 csshearCohesion=4e7 #4
@@ -59,7 +58,8 @@ rock = O.materials.append(CohFrictMat( young=ryoung,
                                             label='spheres'))
 
 #adding deposit -----
-spheres = ymport.text('./sample.txt')
+spheres = ymport.text('./standard sample.txt')
+#spheres = ymport.text('./sample.txt')
 
 #list object
 id_spheres = O.bodies.append(spheres)
@@ -131,32 +131,30 @@ maxh = max([O.bodies[i].state.pos[1] for i in id_spheres])
 
 #yade rgb list
 yade_rgb_list=[ [0.50,0.50,0.50],
-		[1.00,0.00,0.00],
-		[0.00,1.00,0.00],
-		[1.00,1.00,0.00],
-		[0.85,0.85,0.85],
-		[0.00,1.00,1.00],
-		[1.00,0.00,1.00],
-		[0.90,0.90,0.90],
-		[0.15,0.15,0.15],
-		[0.00,0.00,1.00] ]
+        		[1.00,0.00,0.00],
+        		[0.00,1.00,0.00],
+        		[1.00,1.00,0.00],
+        		[0.85,0.85,0.85],
+        		[0.00,1.00,1.00],
+        		[1.00,0.00,1.00],
+        		[0.90,0.90,0.90],
+        		[0.15,0.15,0.15],
+        		[0.00,0.00,1.00] ]
 
-rgb_list=yade_rgb_list[-2:-1]+yade_rgb_list[4:5]
+base_rgb_list=yade_rgb_list[-2:-1]+yade_rgb_list[4:5]
+deposit_rgb_list=yade_rgb_list[5:7]	
 
 #proper number of layer
-while len(rgb_list)<n_layer:
+while len(base_rgb_list)<n_layer:
 
-	rgb_list*=2
+	base_rgb_list*=2
 
-rgb_detachment=yade_rgb_list[1]
+while len(deposit_rgb_list)<20:
+
+	deposit_rgb_list*=2
 
 #coloring the sample -----
 height_step=maxh/(n_layer)
-
-#thickness
-height_base=case*height_step/2
-height_salt=case*height_step/2
-height_rock=maxh-height_base-height_salt
 
 #so many conditions
 for i in id_spheres:
@@ -168,7 +166,7 @@ for i in id_spheres:
 		#rock
 		if k*height_step<=O.bodies[i].state.pos[1]<=(k+1)*height_step:
 
-			O.bodies[i].shape.color = rgb_list[k]
+			O.bodies[i].shape.color = base_rgb_list[k]
 			O.bodies[i].material = O.materials[rock]
 
 	
@@ -191,47 +189,47 @@ GenerateFold(folder_name)
 out_file=open(folder_name+'/progress='+'%.2f%%' %progress+".txt",'w')
 
 def RecordData(out_file,which_spheres):
-
+    
+    print 'amount of spheres:',len(which_spheres)
+    
 	#TW records stress data
-	TW=TesselationWrapper()
-	TW.computeVolumes()
-	stress=bodyStressTensors()
+    TW=TesselationWrapper()
+    TW.computeVolumes()
+    stress=bodyStressTensors()
 
-	for this_sphere in which_spheres:
+    for this_sphere in which_spheres:
 
-	    this_stress=stress[this_sphere.id]*4.*pi/3.*this_sphere.shape.radius**3/TW.volume(this_sphere.id)
+        this_stress=stress[this_sphere.id]*4.*pi/3.*this_sphere.shape.radius**3/TW.volume(this_sphere.id)
 
 	    #print(this_stress)
 	    
 	    #id
-	    out_file.write(str(this_sphere.id))  
-	    out_file.write(',')
+        out_file.write(str(this_sphere.id))  
+        out_file.write(',')
 
 	    #radius
-	    out_file.write(str(this_sphere.shape.radius))
+        out_file.write(str(this_sphere.shape.radius))
 
 	    #color
-	    for this_color in this_sphere.shape.color:
+        for this_color in this_sphere.shape.color:
 
-		out_file.write(',')
-
-		out_file.write(str(this_color))
+            out_file.write(',')
+            out_file.write(str(this_color))
 	    
 	    #position
-	    for this_pos in this_sphere.state.pos:
+        for this_pos in this_sphere.state.pos:
 
-		out_file.write(',')
+            out_file.write(',')
+            out_file.write(str(this_pos))
 
-		out_file.write(str(this_pos))
+        for this_line in this_stress:
+            
+            for this_str in this_line:
+                
+                out_file.write(',')
+                out_file.write(str(this_str))
 
-	    for this_line in this_stress:
-
-		for this_str in this_line:
-
-	    	     out_file.write(',')
-	   	     out_file.write(str(this_str))
-
-	    out_file.write('\n')
+        out_file.write('\n')
 
 RecordData(out_file,spheres)
 
@@ -242,7 +240,7 @@ O.bodies.append(wall_right)
 
 O.bodies.append(base)
 
-print 'case',case
+spheres_base=cp.deepcopy(spheres)
 
 O.run()
 
@@ -254,28 +252,32 @@ def startPushing():
 
     if direction=='double':
 
-	wall_left.state.vel = Vector3(-v/2, 0,0)
+        wall_left.state.vel = Vector3(-v/2, 0,0)
     	wall_right.state.vel = Vector3( v/2, 0,0)
 
     	base.state.vel = Vector3( 0, 0,0)
 
     if direction=='single':
 
-	wall_left.state.vel = Vector3( 0, 0,0)
+        wall_left.state.vel = Vector3( 0, 0,0)
     	wall_right.state.vel = Vector3( v, 0,0)
 
     	base.state.vel = Vector3( v, 0,0)
 
-    controller.command = 'stopSimulation(spheres)'
+    controller.command = 'stopSimulation(spheres,spheres_base)'
 
     O.engines = O.engines
 
     #[snap] [VTK][vtkRecorder]
-    
+
 #flag = 1 #judging whether to save data. 1 is yes, 0 is no
 #count = 0 #for indicating the progress of simulation
-def stopSimulation(spheres):
+def stopSimulation(spheres,spheres_base):
 
+    y_max_base=max([this_sphere.state.pos[1] for this_sphere in spheres[:len(spheres_base)]])
+    
+    print 'max height of base is %.2f'%y_max_base
+    
     #global flag
     #global count
     
@@ -290,44 +292,76 @@ def stopSimulation(spheres):
 
     #show the progress
     print 'the progress is %.2f%%' %progress
+    print ''
     
-    print '\n'
-    #save the state every 10% of the progress
-
     if O.iter%savePeriod==0:
 
-	out_file=open(folder_name+'/progress='+'%.2f%%' %progress+".txt",'w')
+        #save the state every 10% of the progress
+        x_max = max([this_sphere.state.pos[0] for this_sphere in spheres])
+        y_max = max([this_sphere.state.pos[1] for this_sphere in spheres])
+        x_min = min([this_sphere.state.pos[0] for this_sphere in spheres])
+        y_min = min([this_sphere.state.pos[1] for this_sphere in spheres])
+        
+    	out_file=open(folder_name+'/progress='+'%.2f%%' %progress+".txt",'w')
+        
+        #RecordData(out_file,spheres)
+        
+        old_bodies=[1 for this_body in O.bodies if this_body!=None]
+        
+        print 'before delete'
+        print 'amount of bodies:',len(old_bodies)
+        
+        #create idx list for deleting
+        idx_to_delete=[]
+        
+        for k in range(len(spheres_base)+3,len(O.bodies)):
 
-	print
-	print 'amount of spheres:',len(spheres)
-	print 'amount of bodies:',len(O.bodies)
-	RecordData(out_file,spheres)
-	
-	#adding deposit -----
-	deposit_thickness = height_step #not the final thickness 
-	deposit = pack.SpherePack()
-	deposit.makeCloud((-0.5*box_length, 1.2*maxh, 0.0), ( 1.5*box_length, 1.2*maxh+1.5*deposit_thickness,0), rMean = 0.6, rRelFuzz = 0.15)
-	deposit.toSimulation(material = rock)
+            if O.bodies[k]==None:
+                
+                continue
+            
+            if O.bodies[k].state.pos[1]>y_max_base:
+            
+                idx_to_delete.append(k)
 
-	print 'amount of deposit',len(deposit)
-	spheres_deposit=[O.bodies[idx] for idx in range(len(O.bodies)-len(deposit),len(O.bodies))]
+        for this_idx in idx_to_delete:
+            
+            O.bodies.erase(this_idx)
+            
+        new_bodies=[1 for this_body in O.bodies if this_body!=None]
+        
+        print 'after delete'
+        print 'amount of bodies:',len(new_bodies)
+    	
+    	#adding deposit -----
+        deposit_thickness = 2*height_step #not the final thickness 
+        deposit_cellpadding=(x_max-x_min)/10
+        deposit = pack.SpherePack()
+        deposit.makeCloud((x_min+deposit_cellpadding, y_max, 0.0),
+                          (x_max-deposit_cellpadding, y_max+deposit_thickness,0),
+                          rMean = 0.6, rRelFuzz = 0.12)
+        deposit.toSimulation(material = rock)
 
-	'''???'''
-	for ix in spheres_deposit:
-
-	    if O.bodies[ix].state.pos[0] < wall_right.state.pos[0] or O.bodies[ix].state.pos[0]>wall_left.state.pos[0]:
-		print ix
-   	 	#delete spheres that are above the target height
-            	O.bodies.erase(len(O.bodies)-len(deposit)+ix) 
-
-	    	#also,delete the corresponding ids in the id list
-            	spheres_deposit.remove(ix) 	
-	
-	#collect spheres
-	spheres+=spheres_deposit
+    	print 'amount of deposit',len(deposit)
     
+        spheres_deposit=[O.bodies[idx] for idx in range(len(O.bodies)-len(deposit),len(O.bodies))]
+	
+        if O.iter%(2*savePeriod)==0:
+            
+            for this_sphere in spheres_deposit:
+                
+                this_sphere.shape.color=deposit_rgb_list[0]
+    	
+        else:
+            
+            for this_sphere in spheres_deposit:
+                
+                this_sphere.shape.color=deposit_rgb_list[1]
+
+    	#collect spheres
+    	spheres+=spheres_deposit
+  
     if progress/100 > 0.5:
 
-	O.pause()    
- 
-
+        '''need delete'''
+        O.pause()    
