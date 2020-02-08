@@ -12,12 +12,13 @@ from yade import pack, ymport
 v=.2 #0.2
 n_layer=10
 
-direction='double'
+direction='double diff-2'
 
 case_name=''
 case_name+=direction
 
 swelling=False
+detachment=False
 
 if swelling:
     
@@ -67,6 +68,13 @@ m_rock = O.materials.append(CohFrictMat(young=ryoung,
                                         shearCohesion=csshearCohesion,
                                         label='rock'))
 
+m_detachment = O.materials.append(CohFrictMat(young=ryoung,
+                                              poisson=rpoisson,
+                                              density=rden,
+                                              frictionAngle=0,
+                                              normalCohesion=csnormalCohesion,
+                                              shearCohesion=csshearCohesion,
+                                              label='detachment'))
 #swelling
 m_swelling = O.materials.append(CohFrictMat(young=ryoung,
                                             poisson=rpoisson,
@@ -176,6 +184,7 @@ while len(deposit_rgb_list)<20:
 	deposit_rgb_list*=2
 
 rgb_swelling=yade_rgb_list[0]
+rgb_detachment=yade_rgb_list[1]
 
 #coloring the sample -----
 height_step=maxh/(n_layer)
@@ -193,15 +202,22 @@ for i in id_spheres:
             O.bodies[i].shape.color = base_rgb_list[k]
             O.bodies[i].material = O.materials[m_rock]
             
-        #swelling
-        if swelling:
+    #swelling
+    if swelling:
 
-            if box_length*0.4<=O.bodies[i].state.pos[0]<=box_length*0.6:
-                
-                O.bodies[i].shape.color = rgb_swelling
-                O.bodies[i].material = O.materials[m_swelling]
-
-	
+        if box_length*0.4<=O.bodies[i].state.pos[0]<=box_length*0.6:
+            
+            O.bodies[i].shape.color = rgb_swelling
+            O.bodies[i].material = O.materials[m_swelling]
+        
+    if detachment:
+        
+        #base detachment
+        if  O.bodies[i].state.pos[1]<=height_step/5:
+            
+            O.bodies[i].shape.color = rgb_detachment
+            O.bodies[i].material = O.materials[m_detachment]
+        
 print "The max height is %.3f" % maxh
 print "The max length is %.3f" % maxl
 
@@ -323,18 +339,38 @@ def startPushing():
     if O.iter < pre_thres:
         return
 
-    if direction=='double':
+    if direction=='double-1':
 
         wall_left.state.vel = Vector3(-v/2, 0,0)
-    	wall_right.state.vel = Vector3( v/2, 0,0)
-    	wall_bottom.state.vel = Vector3( 0, 0,0)
+        wall_right.state.vel = Vector3( v/2, 0,0)
+    
+    if direction=='double-2':
 
-    if direction=='single':
+        wall_left.state.vel = Vector3(-v/2, 0,0)
+        wall_right.state.vel = Vector3( v/2, 0,0)
+        wall_bottom.state.vel = Vector3( v/2, 0,0)
+        
+    if direction=='double diff-1':
 
-        wall_left.state.vel = Vector3( 0, 0,0)
+        wall_left.state.vel = Vector3( -v/2, 0,0)
     	wall_right.state.vel = Vector3( v, 0,0)
-    	wall_bottom.state.vel = Vector3( v, 0,0)
+        wall_bottom.state.vel = Vector3( v, 0,0)
+        
+    if direction=='double diff-2':
 
+        wall_left.state.vel = Vector3( -v/2, 0,0)
+    	wall_right.state.vel = Vector3( v, 0,0)  
+        wall_bottom.state.vel = Vector3( -v/2, 0,0)
+        
+    if direction=='single-1':
+
+    	wall_right.state.vel = Vector3( v, 0,0)
+      
+    if direction=='single-2':
+
+    	wall_right.state.vel = Vector3( v, 0,0)
+        wall_bottom.state.vel = Vector3( v, 0,0)
+        
     controller.command = 'stopSimulation(spheres_base)'
 
     O.engines = O.engines
