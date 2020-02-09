@@ -494,8 +494,8 @@ def stopSimulation(deposit,erosion):
             deposit_thickness = 2*20 #not the final thickness=5
             deposit_length=100
             deposit_pack = pack.SpherePack()
-            deposit_pack.makeCloud((x_max-deposit_length, y_max, 0.0),
-                                   (x_max, y_max+deposit_thickness,0),
+            deposit_pack.makeCloud((0.7*x_max-deposit_length, y_max, 0.0),
+                                   (0.7*x_max, y_max+deposit_thickness,0),
                                    rMean = 1, rRelFuzz = 0.2)
             deposit_pack.toSimulation(material = m_rock)
     
