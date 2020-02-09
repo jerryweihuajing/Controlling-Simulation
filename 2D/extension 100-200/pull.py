@@ -352,15 +352,15 @@ def startPushing():
         
     if direction=='double diff-1':
 
-        wall_left.state.vel = Vector3( -v/2, 0,0)
-    	wall_right.state.vel = Vector3( v, 0,0)
-        wall_bottom.state.vel = Vector3( v, 0,0)
+        wall_left.state.vel = Vector3( -v/4, 0,0)
+        wall_right.state.vel = Vector3( 3*v/4, 0,0)
+        wall_bottom.state.vel = Vector3( 3*v/4, 0,0)
         
     if direction=='double diff-2':
 
-        wall_left.state.vel = Vector3( -v/2, 0,0)
-    	wall_right.state.vel = Vector3( v, 0,0)  
-        wall_bottom.state.vel = Vector3( -v/2, 0,0)
+        wall_left.state.vel = Vector3( -v/4, 0,0)
+        wall_right.state.vel = Vector3( 3*v/4, 0,0)  
+        wall_bottom.state.vel = Vector3( -v/4, 0,0)
         
     if direction=='single-1':
 
