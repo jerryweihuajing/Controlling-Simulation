@@ -1,4 +1,8 @@
 .pyc
 .idea/
 output/
+<<<<<<< HEAD
 Figures/
+=======
+Figures/
+>>>>>>> Update .gitignore
