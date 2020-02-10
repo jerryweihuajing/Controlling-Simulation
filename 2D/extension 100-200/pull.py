@@ -12,7 +12,7 @@ from yade import pack, ymport
 v=.2 #0.2
 n_layer=10
 
-direction='double diff-2'
+direction='double diff-1'
 
 case_name=''
 case_name+=direction
