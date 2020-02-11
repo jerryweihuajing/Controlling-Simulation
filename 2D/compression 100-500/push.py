@@ -21,11 +21,11 @@ case_name=direction
 deposit=True
 
 thickness=20
-distance=200
+distance=250
 length=100
 period=1
 
-base_detachment=False
+base_detachment=True
 salt_detachment=False
 
 erosion=False
@@ -261,30 +261,8 @@ for i in id_spheres:
 
             if O.bodies[i].state.pos[1]<=height_base:
                 
-                if exp_name=='exp-1':
-                    
-                    flag=(O.bodies[i].state.pos[0]<=box_length/2)
-                    
-                if exp_name=='exp-2':
-                    
-                    flag=(O.bodies[i].state.pos[0]>=box_length/2)
-                
-                if exp_name=='exp-3':
-                    
-                    flag=(O.bodies[i].state.pos[0]<=box_length/3)
-                
-                if exp_name=='exp-4':
-                    
-                    flag=(box_length/3<=O.bodies[i].state.pos[0]<=2*box_length/3)
-                    
-                if exp_name=='exp-5':
-                    
-                    flag=(O.bodies[i].state.pos[0]>=2*box_length/3)
-                    
-                if flag:
-
-                    O.bodies[i].shape.color = rgb_detachment
-                    O.bodies[i].material = O.materials[m_detachment]
+                O.bodies[i].shape.color = rgb_detachment
+                O.bodies[i].material = O.materials[m_detachment]
 
 		#salt detachment
         if salt_detachment:
