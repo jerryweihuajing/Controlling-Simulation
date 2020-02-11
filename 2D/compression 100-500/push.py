@@ -8,7 +8,7 @@ import numpy as np
 from yade import pack, ymport
 
 #basic parameters
-case=2
+case=1
 v= .4 #default 0.4
 dfric=0.0 #default 0 
 n_layer=10
