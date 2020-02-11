@@ -8,7 +8,7 @@ import numpy as np
 from yade import pack, ymport
 
 #basic parameters
-case=1
+case=2
 v= .4 #default 0.4
 dfric=0.0 #default 0 
 n_layer=10
@@ -21,7 +21,7 @@ case_name=direction
 deposit=True
 
 thickness=20
-distance=250
+distance=200
 length=100
 period=1
 
