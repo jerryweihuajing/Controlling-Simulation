@@ -21,7 +21,7 @@ case_name=direction
 deposit=True
 
 thickness=20
-distance=200
+distance=100
 length=100
 period=1
 
