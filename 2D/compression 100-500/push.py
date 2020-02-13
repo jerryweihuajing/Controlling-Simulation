@@ -18,12 +18,12 @@ exp_name=''
 
 case_name=direction
 
-deposit=True
+deposit=False
 
 thickness=20
 distance=100
 length=100
-period=1
+period=4
 
 base_detachment=True
 salt_detachment=False
@@ -244,19 +244,27 @@ for i in id_spheres:
             O.bodies[i].shape.color = base_rgb_list[k]
             O.bodies[i].material = O.materials[m_rock]
                 
-#            #upper rock
-#            if O.bodies[i].state.pos[1]>maxh/2:
-#                
-#                O.bodies[i].shape.color = upper_base_rgb_list[k]
-#                O.bodies[i].material = O.materials[m_rock]
-#            
-#            #lower rock
-#            if O.bodies[i].state.pos[1]<maxh/2:
-#                
-#                O.bodies[i].shape.color = lower_base_rgb_list[k]
-#                O.bodies[i].material = O.materials[m_rock]
-
-		#base detachment
+		#salt detachment
+        if salt_detachment:
+            
+            #upper rock
+            if O.bodies[i].state.pos[1]>maxh/2:
+                
+                O.bodies[i].shape.color = upper_base_rgb_list[k]
+                O.bodies[i].material = O.materials[m_rock]
+            
+            #lower rock
+            if O.bodies[i].state.pos[1]<maxh/2:
+                
+                O.bodies[i].shape.color = lower_base_rgb_list[k]
+                O.bodies[i].material = O.materials[m_rock]
+            
+            if maxh/2-height_salt/2<=O.bodies[i].state.pos[1]<=maxh/2+height_salt/2:
+		
+                O.bodies[i].shape.color = rgb_detachment
+                O.bodies[i].material = O.materials[m_detachment]
+                
+        #base detachment
         if base_detachment:
 
             if O.bodies[i].state.pos[1]<=height_base:
@@ -264,37 +272,6 @@ for i in id_spheres:
                 O.bodies[i].shape.color = rgb_detachment
                 O.bodies[i].material = O.materials[m_detachment]
 
-		#salt detachment
-        if salt_detachment:
-            
-            if maxh/2-height_salt/2<=O.bodies[i].state.pos[1]<=maxh/2+height_salt/2:
-		
-                if exp_name=='exp-1':
-                    
-                    flag=(O.bodies[i].state.pos[0]<=box_length/2)
-                    
-                if exp_name=='exp-2':
-                    
-                    flag=(O.bodies[i].state.pos[0]>=box_length/2)
-                
-                if exp_name=='exp-3':
-                    
-                    flag=(O.bodies[i].state.pos[0]<=box_length/3)
-                
-                if exp_name=='exp-4':
-                    
-                    flag=(box_length/3<=O.bodies[i].state.pos[0]<=2*box_length/3)
-                    
-                if exp_name=='exp-5':
-                    
-                    flag=(O.bodies[i].state.pos[0]>=2*box_length/3)
-                    
-                if flag:
-                    
-    				O.bodies[i].shape.color = rgb_detachment
-    				O.bodies[i].material = O.materials[m_detachment]
-
-	
 print "The max height is %.3f" % maxh
 print "The max length is %.3f" % maxl
 
