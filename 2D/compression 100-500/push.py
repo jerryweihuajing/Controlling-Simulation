@@ -8,7 +8,9 @@ import numpy as np
 from yade import pack, ymport
 
 #basic parameters
-case=2
+case_base=1
+case_salt=2
+
 v= .4 #default 0.4
 dfric=0.0 #default 0 
 n_layer=10
@@ -30,15 +32,17 @@ salt_detachment=False
 
 erosion=False
 
-if case:
+if case_base>0:
     
     if base_detachment:
         
-        case_name+=' base-'+str(case*5)+'km'
+        case_name+=' base-'+str(case_base*5)+'km'
+    
+if case_salt>0:
     
     if salt_detachment:
         
-        case_name+=' salt-'+str(case*5)+'km'
+        case_name+=' salt-'+str(case_salt*5)+'km'
 
 if exp_name!='':
 
@@ -228,8 +232,8 @@ rgb_yellow=yade_rgb_list[3]
 height_step=maxh/(n_layer)
 
 #thickness
-height_base=case*height_step/2
-height_salt=case*height_step/2
+height_base=case_base*height_step/2
+height_salt=case_salt*height_step/2
 height_rock=maxh-height_base-height_salt
 
 #so many conditions
