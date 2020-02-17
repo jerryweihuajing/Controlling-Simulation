@@ -27,7 +27,7 @@ distance=100
 length=100
 period=4
 
-base_detachment=False
+base_detachment=True
 salt_detachment=False
 
 erosion=False
@@ -176,8 +176,8 @@ PyRunner(command = 'startPushing()', iterPeriod = checkPeriod, label = 'controll
 #snapshot = qt.SnapshotEngine(fileBase='-',iterPeriod=savePeriod)
 #vtkRecorder = VTKRecorder(fileName='0.00%-',recorders=['all'],iterPeriod=savePeriod)
 
-#O.dt =1* utils.PWaveTimeStep()
-O.dt=0.0027
+O.dt =1* utils.PWaveTimeStep()
+#O.dt=0.0027
 
 TW1 = TesselationWrapper() #TW1 records cumulative strain data
 TW1.setState(0)
