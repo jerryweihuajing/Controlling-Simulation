@@ -23,7 +23,7 @@ case_name=direction
 deposit=False
 
 thickness=20
-distance=100
+distance=200
 length=100
 period=4
 
@@ -38,7 +38,7 @@ if case_base>0:
         
         case_name+=' base-'+str(case_base*5)+'km'
     
-salt_distance=0
+salt_distance=100
 salt_width=100
 
 if case_salt>0:
