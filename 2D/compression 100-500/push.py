@@ -28,7 +28,7 @@ length=100
 period=4
 
 base_detachment=True
-salt_detachment=False
+salt_detachment=True
 
 erosion=False
 
@@ -38,7 +38,7 @@ if case_base>0:
         
         case_name+=' base-'+str(case_base*5)+'km'
     
-salt_distance=200
+salt_distance=0
 salt_width=100
 
 if case_salt>0:
