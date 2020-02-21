@@ -38,8 +38,8 @@ if case_base>0:
         
         case_name+=' base-'+str(case_base*5)+'km'
     
-salt_distance=100
-salt_width=100
+salt_distance=0
+salt_width=300
 
 if case_salt>0:
     
