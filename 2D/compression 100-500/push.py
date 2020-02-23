@@ -20,15 +20,15 @@ exp_name=''
 
 case_name=direction
 
-deposit=False
+deposit=True
 
 thickness=20
-distance=200
+distance=100
 length=100
-period=4
+period=1
 
 base_detachment=True
-salt_detachment=True
+salt_detachment=False
 
 erosion=False
 
@@ -38,8 +38,8 @@ if case_base>0:
         
         case_name+=' base-'+str(case_base*5)+'km'
     
-salt_distance=0
-salt_width=300
+salt_distance=300
+salt_width=100
 
 if case_salt>0:
     
@@ -491,7 +491,7 @@ def stopSimulation(deposit,erosion,thickness,length,distance,period):
             print '-- Simulation off'
             
         #make deposition 
-        if O.iter>savePeriod and deposit and (O.iter==period*savePeriod): #front mountain
+        if O.iter>savePeriod and deposit and (O.iter==period*savePeriod+3*checkPeriod): #front mountain
         
             #save the state every 10% of the progress
             x_max = max([this_sphere.state.pos[0] for this_sphere in spheres])
