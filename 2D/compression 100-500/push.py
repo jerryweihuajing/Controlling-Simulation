@@ -22,10 +22,10 @@ case_name=direction
 
 deposit=True
 
-thickness=10
-distance=300
-length=100
-period=1
+deposit_thickness=10
+deposit_distance=200
+deposit_length=100
+deposit_period=1
 
 base_detachment=True
 salt_detachment=False
@@ -58,10 +58,10 @@ if deposit:
     
     case_name+=' with deposit'
     
-    case_name+=' T='+str(thickness)
-    case_name+=' D='+str(distance)
-    case_name+=' L='+str(length)
-    case_name+=' P='+str(period)
+    case_name+=' DT='+str(deposit_thickness)
+    case_name+=' DD='+str(deposit_distance)
+    case_name+=' DL='+str(deposit_ength)
+    case_name+=' DP='+str(deposit_period)
     
 if erosion:
     
@@ -435,7 +435,12 @@ def startPushing():
 
 #flag = 1 #judging whether to save data. 1 is yes, 0 is no
 #count = 0 #for indicating the progress of simulation
-def stopSimulation(deposit,erosion,thickness,length,distance,period):
+def stopSimulation(deposit,
+                   erosion,
+                   deposit_thickness,
+                   deposit_length,
+                   deposit_distance,
+                   deposit_period):
     
     offset=box_length-(wall_right.state.pos[0]-wall_left.state.pos[0]) #wall ypos
     progress=(offset/box_length)*100
@@ -500,11 +505,9 @@ def stopSimulation(deposit,erosion,thickness,length,distance,period):
             y_min = min([this_sphere.state.pos[1] for this_sphere in spheres])
                     
         	#adding deposit -----
-            deposit_thickness = 2*thickness #not the final thickness=5
-            deposit_length=length
             deposit_pack = pack.SpherePack()
-            deposit_pack.makeCloud((x_max-distance-deposit_length, y_max, 0.0),
-                                   (x_max-distance, y_max+deposit_thickness,0),
+            deposit_pack.makeCloud((x_max-deposit_distance-deposit_length, y_max, 0.0),
+                                   (x_max-deposit_distance, y_max+2*deposit_thickness,0),
                                    rMean = 1, rRelFuzz = 0.2)
             deposit_pack.toSimulation(material = m_rock)
     
