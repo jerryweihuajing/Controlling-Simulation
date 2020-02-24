@@ -23,7 +23,7 @@ case_name=direction
 deposit=True
 
 deposit_thickness=10
-deposit_distance=100
+deposit_distance=300
 deposit_length=100
 deposit_period=1
 
