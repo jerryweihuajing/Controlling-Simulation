@@ -8,41 +8,61 @@ import numpy as np
 from yade import pack, ymport
 
 #basic parameters
-case=0
+case_base=1
+case_salt=2
+
 v= .4 #default 0.4
 dfric=0.0 #default 0 
 n_layer=10
 
-direction='double'
+direction='single'
 exp_name=''
 
-case_name=''
-case_name+=direction
-
-base_detachment=False
-salt_detachment=False
+case_name=direction
 
 deposit=False
+
+deposit_thickness=10
+deposit_distance=300
+deposit_length=100
+deposit_period=1
+
+base_detachment=True
+salt_detachment=True
+
 erosion=False
 
-if case:
+if case_base>0:
     
     if base_detachment:
         
-        case_name+=' base-'+str(case*5)+'km'
+        case_name+=' base-'+str(case_base*5)+'km'
+    
+salt_distance=0
+salt_width=300
+
+if case_salt>0:
     
     if salt_detachment:
         
-        case_name+=' salt-'+str(case*5)+'km'
+        case_name+=' salt-'+str(case_salt*5)+'km'
 
-if exp_name!='':
+        case_name+=' SD='+str(salt_distance)
+        case_name+=' SW='+str(salt_width)
     
+if exp_name!='':
+
     case_name+=(' '+exp_name)
 
 if deposit:
     
     case_name+=' with deposit'
-  
+    
+    case_name+=' DT='+str(deposit_thickness)
+    case_name+=' DD='+str(deposit_distance)
+    case_name+=' DL='+str(deposit_length)
+    case_name+=' DP='+str(deposit_period)
+    
 if erosion:
     
     case_name+=' with erosion'
@@ -137,8 +157,8 @@ for i in id_spheres:
 
 #defining engines -----
 savePeriod = int(2*8000/abs(v)) # save files for every iterPeriod steps
-checkPeriod = int(savePeriod/5) #for print
-pre_thres = checkPeriod #for deposition which is not already done
+checkPeriod = savePeriod/100 #int(savePeriod/5) #for print
+pre_thres = checkPeriod  #for deposition which is not already done
 
 O.engines = [	
 ForceResetter(),
@@ -157,6 +177,7 @@ PyRunner(command = 'startPushing()', iterPeriod = checkPeriod, label = 'controll
 #vtkRecorder = VTKRecorder(fileName='0.00%-',recorders=['all'],iterPeriod=savePeriod)
 
 O.dt =1* utils.PWaveTimeStep()
+#O.dt=0.0027
 
 TW1 = TesselationWrapper() #TW1 records cumulative strain data
 TW1.setState(0)
@@ -181,26 +202,45 @@ yade_rgb_list=[[0.50,0.50,0.50],
                [0.15,0.15,0.15],
                [0.00,0.00,1.00]]
 
+#grey: yade_rgb_list[4:5]
+#black: yade_rgb_list[-2:-1]
+#green: yade_rgb_list[2:3]
+#yellow: yade_rgb_list[3:4]
+
 base_rgb_list=yade_rgb_list[-2:-1]+yade_rgb_list[4:5]
+lower_base_rgb_list=yade_rgb_list[-2:-1]+yade_rgb_list[5:6]
+upper_base_rgb_list=yade_rgb_list[6:7]+yade_rgb_list[4:5]
 deposit_rgb_list=yade_rgb_list[2:4]+yade_rgb_list[9:]+yade_rgb_list[0:1]+yade_rgb_list[5:7]
 
 #proper number of layer
 while len(base_rgb_list)<n_layer:
 
 	base_rgb_list*=2
+    
+#proper number of layer
+while len(upper_base_rgb_list)<n_layer:
 
+	upper_base_rgb_list*=2
+
+#proper number of layer
+while len(lower_base_rgb_list)<n_layer:
+
+	lower_base_rgb_list*=2
+        
 while len(deposit_rgb_list)<20:
 
 	deposit_rgb_list*=2
 
 rgb_detachment=yade_rgb_list[1]
+rgb_green=yade_rgb_list[2]
+rgb_yellow=yade_rgb_list[3]
 
 #coloring the sample -----
 height_step=maxh/(n_layer)
 
 #thickness
-height_base=case*height_step/2
-height_salt=case*height_step/2
+height_base=case_base*height_step/2
+height_salt=case_salt*height_step/2
 height_rock=maxh-height_base-height_salt
 
 #so many conditions
@@ -208,77 +248,40 @@ for i in id_spheres:
 
 	#O.bodies[i].state.blockedDOFs='XYz'
 
-	for k in range(n_layer):
+    for k in range(n_layer):
 
-		#rock
-		if k*height_step<=O.bodies[i].state.pos[1]<=(k+1)*height_step:
-
-			O.bodies[i].shape.color = base_rgb_list[k]
-			O.bodies[i].material = O.materials[m_rock]
-
-		#base detachment
-        if base_detachment:
-
-            if O.bodies[i].state.pos[1]<=height_base:
+        if k*height_step<=O.bodies[i].state.pos[1]<=(k+1)*height_step:
+            
+            O.bodies[i].shape.color = base_rgb_list[k]
+            O.bodies[i].material = O.materials[m_rock]
                 
-                flag=(exp_name=='')
+    		#salt detachment
+            if salt_detachment:
                 
-                if exp_name=='exp-1':
-                    
-                    flag=(O.bodies[i].state.pos[0]<=box_length/2)
-                    
-                if exp_name=='exp-2':
-                    
-                    flag=(O.bodies[i].state.pos[0]>=box_length/2)
+#                if O.bodies[i].state.pos[1]>=maxh/2:
+#                
+#                    O.bodies[i].shape.color = upper_base_rgb_list[k]
+#                    O.bodies[i].material = O.materials[m_rock]
+#                
+#                if O.bodies[i].state.pos[1]<=maxh/2:
+#                    
+#                    O.bodies[i].shape.color = lower_base_rgb_list[k]
+#                    O.bodies[i].material = O.materials[m_rock]
                 
-                if exp_name=='exp-3':
+                if maxh/2-height_salt/2<=O.bodies[i].state.pos[1]<=maxh/2+height_salt/2 and \
+                box_length-salt_distance-salt_width<=O.bodies[i].state.pos[0]<=box_length-salt_distance:
+    		
+                    O.bodies[i].shape.color = rgb_detachment
+                    O.bodies[i].material = O.materials[m_detachment]
                     
-                    flag=(O.bodies[i].state.pos[0]<=box_length/3)
-                
-                if exp_name=='exp-4':
+            #base detachment
+            if base_detachment:
+    
+                if O.bodies[i].state.pos[1]<=height_base:
                     
-                    flag=(box_length/3<=O.bodies[i].state.pos[0]<=2*box_length/3)
-                    
-                if exp_name=='exp-5':
-                    
-                    flag=(O.bodies[i].state.pos[0]>=2*box_length/3)
-                    
-                if flag:
-
                     O.bodies[i].shape.color = rgb_detachment
                     O.bodies[i].material = O.materials[m_detachment]
 
-		#salt detachment
-        if salt_detachment:
-            
-            if maxh/2-height_salt/2<=O.bodies[i].state.pos[1]<=maxh/2+height_salt/2:
-		
-                if exp_name=='exp-1':
-                    
-                    flag=(O.bodies[i].state.pos[0]<=box_length/2)
-                    
-                if exp_name=='exp-2':
-                    
-                    flag=(O.bodies[i].state.pos[0]>=box_length/2)
-                
-                if exp_name=='exp-3':
-                    
-                    flag=(O.bodies[i].state.pos[0]<=box_length/3)
-                
-                if exp_name=='exp-4':
-                    
-                    flag=(box_length/3<=O.bodies[i].state.pos[0]<=2*box_length/3)
-                    
-                if exp_name=='exp-5':
-                    
-                    flag=(O.bodies[i].state.pos[0]>=2*box_length/3)
-                    
-                if flag:
-                    
-    				O.bodies[i].shape.color = rgb_detachment
-    				O.bodies[i].material = O.materials[m_detachment]
-
-	
 print "The max height is %.3f" % maxh
 print "The max length is %.3f" % maxl
 
@@ -295,7 +298,7 @@ folder_name='./input//'+case_name
 #Generate Fold
 GenerateFold(folder_name)
 
-out_file=open(folder_name+'/progress='+'%.2f%%' %progress+".txt",'w')
+out_file=open(folder_name+'/A_progress='+'%.2f%%' %progress+".txt",'w')
  
 def Erosion(which_O,y_max):
     
@@ -374,6 +377,13 @@ def RecordData(out_file,which_spheres):
             out_file.write(',')
             out_file.write(str(this_pos))
 
+        #velocity
+        for this_vel in this_sphere.state.vel:
+
+            out_file.write(',')
+            out_file.write(str(this_vel))
+        
+        #stress
         for this_line in this_stress:
             
             for this_str in this_line:
@@ -417,7 +427,12 @@ def startPushing():
         wall_right.state.vel = Vector3( -v, 0,0)
         wall_bottom.state.vel = Vector3( 0, 0,0)
         
-    controller.command = 'stopSimulation(deposit,erosion)'
+    controller.command = 'stopSimulation(deposit,\
+                            erosion,\
+                            deposit_thickness,\
+                            deposit_length,\
+                            deposit_distance,\
+                            deposit_period)'
 
     O.engines = O.engines
 
@@ -425,7 +440,12 @@ def startPushing():
 
 #flag = 1 #judging whether to save data. 1 is yes, 0 is no
 #count = 0 #for indicating the progress of simulation
-def stopSimulation(deposit,erosion):
+def stopSimulation(deposit,
+                   erosion,
+                   deposit_thickness,
+                   deposit_length,
+                   deposit_distance,
+                   deposit_period):
     
     offset=box_length-(wall_right.state.pos[0]-wall_left.state.pos[0]) #wall ypos
     progress=(offset/box_length)*100
@@ -437,10 +457,27 @@ def stopSimulation(deposit,erosion):
 
     if O.iter%savePeriod==0:
         
+        out_file=open(folder_name+'/A_progress=%.2f%%' %progress+".txt",'w')
+        
+        #make erosion
+        if erosion:
+  
+            erosion_height=0.9*max([O.bodies[k].state.pos[1] for k in range(3,len(O.bodies)) if O.bodies[k]!=None])
+                
+            spheres=Erosion(O,erosion_height)
+            
+        else:
+            
+            spheres=[O.bodies[k] for k in range(3,len(O.bodies))]
+            
+        RecordData(out_file,spheres)
+        
+    if O.iter%savePeriod==3*checkPeriod:
+        
         #flag to deposit
         flag_deposit=True
         
-        out_file=open(folder_name+'/progress='+'%.2f%%' %progress+".txt",'w')
+        out_file=open(folder_name+'/B_progress=%.2f%%' %progress+".txt",'w')
     
         #make erosion
         if erosion:
@@ -456,18 +493,16 @@ def stopSimulation(deposit,erosion):
         RecordData(out_file,spheres)
         
         #end the loop
-        if O.iter==7*savePeriod:
+        if O.iter==7*savePeriod+3*checkPeriod:
 
             O.pause()
             
             print ''
             print '-- Simulation off'
             
-            flag_deposit=False
-            
-        #make deposition
-        if flag_deposit and deposit:
-            
+        #make deposition 
+        if O.iter>savePeriod and deposit and (O.iter==deposit_period*savePeriod+3*checkPeriod): #front mountain
+        
             #save the state every 10% of the progress
             x_max = max([this_sphere.state.pos[0] for this_sphere in spheres])
             y_max = max([this_sphere.state.pos[1] for this_sphere in spheres])
@@ -475,21 +510,17 @@ def stopSimulation(deposit,erosion):
             y_min = min([this_sphere.state.pos[1] for this_sphere in spheres])
                     
         	#adding deposit -----
-            deposit_thickness = 2*height_step #not the final thickness 
-            deposit_cellpadding=0*(x_max-x_min)/10
             deposit_pack = pack.SpherePack()
-            deposit_pack.makeCloud((x_min+deposit_cellpadding, y_max, 0.0),
-                              (x_max-deposit_cellpadding, y_max+deposit_thickness,0),
-                              rMean = 1, rRelFuzz = 0.2)
+            deposit_pack.makeCloud((x_max-deposit_distance-deposit_length, y_max, 0.0),
+                                   (x_max-deposit_distance, y_max+2*deposit_thickness,0),
+                                   rMean = 1, rRelFuzz = 0.2)
             deposit_pack.toSimulation(material = m_rock)
     
             print 'amount of deposit',len(deposit_pack)
         
             spheres_deposit=[O.bodies[idx] for idx in range(len(O.bodies)-len(deposit_pack),len(O.bodies))]
-    	
-            color_idx=O.iter//savePeriod-1
-    
+                
             for this_sphere in spheres_deposit:
                 
-                this_sphere.shape.color=deposit_rgb_list[color_idx]
+                this_sphere.shape.color=rgb_green
  
