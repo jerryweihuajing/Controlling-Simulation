@@ -23,7 +23,11 @@ case_name=direction
 deposit=False
 
 deposit_thickness=10
+<<<<<<< HEAD
 deposit_distance=100
+=======
+deposit_distance=300
+>>>>>>> f08e84f57f72d6aaf261712e9440ac008b9b628b
 deposit_length=100
 deposit_period=1
 
@@ -38,8 +42,13 @@ if case_base>0:
         
         case_name+=' base-'+str(case_base*5)+'km'
     
+<<<<<<< HEAD
 salt_distance=100
 salt_width=300
+=======
+salt_distance=0
+salt_width=100
+>>>>>>> f08e84f57f72d6aaf261712e9440ac008b9b628b
 
 if case_salt>0:
     
@@ -60,7 +69,7 @@ if deposit:
     
     case_name+=' DT='+str(deposit_thickness)
     case_name+=' DD='+str(deposit_distance)
-    case_name+=' DL='+str(deposit_ength)
+    case_name+=' DL='+str(deposit_length)
     case_name+=' DP='+str(deposit_period)
     
 if erosion:
@@ -427,7 +436,16 @@ def startPushing():
         wall_right.state.vel = Vector3( -v, 0,0)
         wall_bottom.state.vel = Vector3( 0, 0,0)
         
+<<<<<<< HEAD
     controller.command = 'stopSimulation(deposit,erosion,deposit_thickness,deposit_length,deposit_distance,deposit_period)'
+=======
+    controller.command = 'stopSimulation(deposit,\
+                            erosion,\
+                            deposit_thickness,\
+                            deposit_length,\
+                            deposit_distance,\
+                            deposit_period)'
+>>>>>>> f08e84f57f72d6aaf261712e9440ac008b9b628b
 
     O.engines = O.engines
 
@@ -496,7 +514,7 @@ def stopSimulation(deposit,
             print '-- Simulation off'
             
         #make deposition 
-        if O.iter>savePeriod and deposit and (O.iter==period*savePeriod+3*checkPeriod): #front mountain
+        if O.iter>savePeriod and deposit and (O.iter==deposit_period*savePeriod+3*checkPeriod): #front mountain
         
             #save the state every 10% of the progress
             x_max = max([this_sphere.state.pos[0] for this_sphere in spheres])
