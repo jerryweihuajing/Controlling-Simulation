@@ -20,15 +20,15 @@ exp_name=''
 
 case_name=direction
 
-deposit=True
+deposit=False
 
 deposit_thickness=10
-deposit_distance=200
+deposit_distance=100
 deposit_length=100
 deposit_period=1
 
 base_detachment=True
-salt_detachment=False
+salt_detachment=True
 
 erosion=False
 
@@ -38,8 +38,8 @@ if case_base>0:
         
         case_name+=' base-'+str(case_base*5)+'km'
     
-salt_distance=300
-salt_width=100
+salt_distance=100
+salt_width=300
 
 if case_salt>0:
     
@@ -427,7 +427,7 @@ def startPushing():
         wall_right.state.vel = Vector3( -v, 0,0)
         wall_bottom.state.vel = Vector3( 0, 0,0)
         
-    controller.command = 'stopSimulation(deposit,erosion,thickness,length,distance,period)'
+    controller.command = 'stopSimulation(deposit,erosion,deposit_thickness,deposit_length,deposit_distance,deposit_period)'
 
     O.engines = O.engines
 
