@@ -12,7 +12,7 @@ from yade import pack, ymport
 v=.2 #0.2
 n_layer=10
 
-direction='single-1'
+direction='single-2'
 
 case_name=''
 case_name+=direction
