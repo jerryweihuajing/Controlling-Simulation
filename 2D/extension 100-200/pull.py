@@ -128,7 +128,7 @@ for i in id_spheres:
 
 #defining engines -----
 savePeriod = int(2400/abs(v)) # save files for every iterPeriod steps
-checkPeriod = int(savePeriod/5) #for print
+checkPeriod = int(savePeriod/100) #for print
 pre_thres = checkPeriod #for deposition which is not already done
 
 O.engines = [	
@@ -234,7 +234,7 @@ folder_name='./input//'+case_name
 #Generate Fold
 GenerateFold(folder_name)
 
-out_file=open(folder_name+'/progress='+'%.2f%%' %progress+".txt",'w')
+out_file=open(folder_name+'/A_progress='+'%.2f%%' %progress+".txt",'w')
 
 def RecordData(out_file,which_spheres):
     
@@ -272,6 +272,13 @@ def RecordData(out_file,which_spheres):
             out_file.write(',')
             out_file.write(str(this_pos))
 
+        #velocity
+        for this_vel in this_sphere.state.vel:
+
+            out_file.write(',')
+            out_file.write(str(this_vel))
+        
+        #stress
         for this_line in this_stress:
             
             for this_str in this_line:
@@ -364,11 +371,11 @@ def startPushing():
         
     if direction=='single-1':
 
-    	wall_right.state.vel = Vector3( v, 0,0)
+        wall_right.state.vel = Vector3( v, 0,0)
       
     if direction=='single-2':
 
-    	wall_right.state.vel = Vector3( v, 0,0)
+        wall_right.state.vel = Vector3( v, 0,0)
         wall_bottom.state.vel = Vector3( v, 0,0)
         
     controller.command = 'stopSimulation(spheres_base)'
@@ -389,12 +396,22 @@ def stopSimulation(spheres_base):
     print 'the progress is %.2f%%' %progress
     print ''
      
+    '''A'''
     if O.iter%savePeriod==0:
+        
+        out_file=open(folder_name+'/A_progress=%.2f%%' %progress+".txt",'w')
+        
+        spheres=[O.bodies[k] for k in range(3,len(O.bodies))]
+            
+        RecordData(out_file,spheres)
+        
+    '''B'''
+    if O.iter%savePeriod==3*checkPeriod:
         
         #flag to deposit
         flag_deposit=True
         
-        out_file=open(folder_name+'/progress='+'%.2f%%' %progress+".txt",'w')
+        out_file=open(folder_name+'/B_progress='+'%.2f%%' %progress+".txt",'w')
         
         y_max_base=max([this_sphere.state.pos[1] for this_sphere in spheres_base])
     
@@ -405,7 +422,7 @@ def stopSimulation(spheres_base):
         RecordData(out_file,spheres)
         
         #end the loop
-        if O.iter==7*savePeriod:
+        if O.iter==7*savePeriod+3*checkPeriod:
 
             O.pause()
             
@@ -415,7 +432,7 @@ def stopSimulation(spheres_base):
             flag_deposit=False
             
         #make deposition
-        if flag_deposit:
+        if O.iter>savePeriod and flag_deposit:
             
             #save the state every 10% of the progress
             x_max = max([this_sphere.state.pos[0] for this_sphere in spheres])
