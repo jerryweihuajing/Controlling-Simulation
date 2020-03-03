@@ -456,23 +456,16 @@ def stopSimulation(deposit,
     print 'the progress is %.2f%%' %progress
     print ''
 
+    '''A'''
     if O.iter%savePeriod==0:
         
         out_file=open(folder_name+'/A_progress=%.2f%%' %progress+".txt",'w')
         
-        #make erosion
-        if erosion:
-  
-            erosion_height=0.9*max([O.bodies[k].state.pos[1] for k in range(3,len(O.bodies)) if O.bodies[k]!=None])
-                
-            spheres=Erosion(O,erosion_height)
-            
-        else:
-            
-            spheres=[O.bodies[k] for k in range(3,len(O.bodies))]
+        spheres=[O.bodies[k] for k in range(3,len(O.bodies))]
             
         RecordData(out_file,spheres)
         
+    '''B'''
     if O.iter%savePeriod==3*checkPeriod:
         
         #flag to deposit
