@@ -461,7 +461,7 @@ def stopSimulation(deposit,
         
         out_file=open(folder_name+'/A_progress=%.2f%%' %progress+".txt",'w')
         
-        spheres=[O.bodies[k] for k in range(3,len(O.bodies))]
+        spheres=[O.bodies[k] for k in range(3,len(O.bodies)) if O.bodies[k]!=None]
             
         RecordData(out_file,spheres)
         
@@ -482,7 +482,7 @@ def stopSimulation(deposit,
             
         else:
             
-            spheres=[O.bodies[k] for k in range(3,len(O.bodies))]
+            spheres=[O.bodies[k] for k in range(3,len(O.bodies)) if O.bodies[k]!=None]
         
         RecordData(out_file,spheres)
         
