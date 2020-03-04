@@ -401,8 +401,12 @@ def stopSimulation(spheres_base):
         
         out_file=open(folder_name+'/A_progress=%.2f%%' %progress+".txt",'w')
         
-        spheres=[O.bodies[k] for k in range(3,len(O.bodies)) if O.bodies[k]!=None]
-
+        y_max_base=max([this_sphere.state.pos[1] for this_sphere in spheres_base])
+    
+        print 'max height of base is %.2f'%y_max_base
+    
+        spheres=Erosion(O,y_max_base)
+        
         RecordData(out_file,spheres)
         
     '''B'''
@@ -413,12 +417,8 @@ def stopSimulation(spheres_base):
         
         out_file=open(folder_name+'/B_progress='+'%.2f%%' %progress+".txt",'w')
         
-        y_max_base=max([this_sphere.state.pos[1] for this_sphere in spheres_base])
-    
-        print 'max height of base is %.2f'%y_max_base
-    
-        spheres=Erosion(O,y_max_base)
-        
+        spheres=[O.bodies[k] for k in range(3,len(O.bodies)) if O.bodies[k]!=None]
+
         RecordData(out_file,spheres)
         
         #end the loop
