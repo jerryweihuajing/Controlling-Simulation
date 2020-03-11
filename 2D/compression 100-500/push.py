@@ -25,7 +25,7 @@ deposit=True
 deposit_thickness=10
 deposit_distance=100
 deposit_length=100
-deposit_period=1
+deposit_period=3
 
 base_detachment=True
 salt_detachment=True
@@ -38,7 +38,7 @@ if case_base>0:
         
         case_name+=' base-'+str(case_base*5)+'km'
     
-salt_distance=200
+salt_distance=0
 salt_width=100
 
 if case_salt>0:
