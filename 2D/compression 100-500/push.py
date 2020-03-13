@@ -9,7 +9,7 @@ from yade import pack, ymport
 
 #basic parameters
 case_base=1
-case_salt=2
+case_salt=3
 
 v= .4 #default 0.4
 dfric=0.0 #default 0 
@@ -20,16 +20,21 @@ exp_name=''
 
 case_name=direction
 
-deposit=True
+deposit=False
+swelling=False
 
-deposit_thickness=20
-deposit_distance=100
-deposit_length=200
+deposit_thickness=10
+deposit_distance=300
+deposit_length=100
 deposit_period=1
 
 base_detachment=True
-salt_detachment=True
+salt_detachment=False
 
+if swelling:
+    
+    case_name+=' swelling'
+    
 erosion=False
 
 if case_base>0:
@@ -39,7 +44,7 @@ if case_base>0:
         case_name+=' base-'+str(case_base*5)+'km'
     
 salt_distance=0
-salt_width=500
+salt_width=200
 
 if case_salt>0:
     
@@ -118,6 +123,14 @@ m_detachment = O.materials.append(CpmMat(young = dyoung,
                                          density = dden,
                                          relDuctility = 0))
 
+#swelling
+m_swelling = O.materials.append(CpmMat(young = 100*ryoung,
+                                       poisson = rpoisson,
+                                       frictionAngle = rfrictAng,
+                                       epsCrackOnset = rreps,
+                                       density = rden,
+                                       relDuctility = 0))
+
 #building boxes -----
 box_length = 500.0
 box_height = 100.0
@@ -155,6 +168,9 @@ for i in id_spheres:
 	#a sphere can be made to move only in the yz plane  and fix spin in Y Z by saying:
 	O.bodies[i].state.blockedDOFs='XYz'
 
+maxl = max([O.bodies[i].state.pos[0] for i in id_spheres])
+maxh = max([O.bodies[i].state.pos[1] for i in id_spheres])
+
 #defining engines -----
 savePeriod = int(8000/abs(v)) # save files for every iterPeriod steps
 checkPeriod = savePeriod/100 #int(savePeriod/5) #for print
@@ -176,7 +192,7 @@ PyRunner(command = 'startPushing()', iterPeriod = checkPeriod, label = 'controll
 #snapshot = qt.SnapshotEngine(fileBase='-',iterPeriod=savePeriod)
 #vtkRecorder = VTKRecorder(fileName='0.00%-',recorders=['all'],iterPeriod=savePeriod)
 
-O.dt =1* utils.PWaveTimeStep()
+O.dt =3* utils.PWaveTimeStep()
 #O.dt=0.0027
 
 TW1 = TesselationWrapper() #TW1 records cumulative strain data
@@ -186,9 +202,6 @@ TW1.setState(1)
 
 TW2 = TesselationWrapper() #TW2 records periodical strain data
 TW2.setState(0)
-
-maxl = max([O.bodies[i].state.pos[0] for i in id_spheres])
-maxh = max([O.bodies[i].state.pos[1] for i in id_spheres])
 
 #yade rgb list
 yade_rgb_list=[[0.50,0.50,0.50],
@@ -230,11 +243,11 @@ while len(lower_base_rgb_list)<n_layer:
 while len(deposit_rgb_list)<20:
 
 	deposit_rgb_list*=2
-
+    
+rgb_swelling=yade_rgb_list[-1]
 rgb_detachment=yade_rgb_list[1]
 rgb_green=yade_rgb_list[2]
 rgb_yellow=yade_rgb_list[3]
-
 #coloring the sample -----
 height_step=maxh/(n_layer)
 
@@ -243,6 +256,24 @@ height_base=case_base*height_step/2
 height_salt=case_salt*height_step/2
 height_rock=maxh-height_base-height_salt
 
+#define swelling
+swelling_height=maxh*0.3
+swelling_length=maxl*0.7
+
+k_swelling=swelling_height/swelling_length
+
+map_height_swelling={}
+
+for k in range(int(box_length)):
+    
+    if k<swelling_length and swelling:
+        
+        map_height_swelling[k]=swelling_height-k_swelling*k
+    
+    else:
+        
+        map_height_swelling[k]=0
+        
 #so many conditions
 for i in id_spheres:
 
@@ -258,30 +289,30 @@ for i in id_spheres:
     		#salt detachment
             if salt_detachment:
                 
-#                if O.bodies[i].state.pos[1]>=maxh/2:
-#                
-#                    O.bodies[i].shape.color = upper_base_rgb_list[k]
-#                    O.bodies[i].material = O.materials[m_rock]
-#                
-#                if O.bodies[i].state.pos[1]<=maxh/2:
-#                    
-#                    O.bodies[i].shape.color = lower_base_rgb_list[k]
-#                    O.bodies[i].material = O.materials[m_rock]
-                
-                if maxh/2-height_salt/2<=O.bodies[i].state.pos[1]<=maxh/2+height_salt/2 and \
+                if maxh/2<=O.bodies[i].state.pos[1]<=maxh/2+height_salt and \
                 box_length-salt_distance-salt_width<=O.bodies[i].state.pos[0]<=box_length-salt_distance:
     		
                     O.bodies[i].shape.color = rgb_detachment
                     O.bodies[i].material = O.materials[m_detachment]
+ 
+            #swelling
+            if swelling:
+                
+                if O.bodies[i].state.pos[1]<=map_height_swelling[int(O.bodies[i].state.pos[0])]:
+  
+                    O.bodies[i].shape.color = rgb_swelling
+                    O.bodies[i].material = O.materials[m_swelling]
+
+                    O.bodies[i].state.blockedDOFs='xyz'
                     
             #base detachment
             if base_detachment:
     
-                if O.bodies[i].state.pos[1]<=height_base:
+                if 0<=O.bodies[i].state.pos[1]-map_height_swelling[int(O.bodies[i].state.pos[0])]<=height_base:
                     
                     O.bodies[i].shape.color = rgb_detachment
-                    O.bodies[i].material = O.materials[m_detachment]
-
+                    O.bodies[i].material = O.materials[m_detachment]  
+                    
 print "The max height is %.3f" % maxh
 print "The max length is %.3f" % maxl
 
@@ -427,7 +458,6 @@ def startPushing():
         wall_right.state.vel = Vector3( -v, 0,0)
         wall_bottom.state.vel = Vector3( 0, 0,0)
         
-
     controller.command = 'stopSimulation(deposit,\
                             erosion,\
                             deposit_thickness,\
@@ -456,16 +486,23 @@ def stopSimulation(deposit,
     print 'the progress is %.2f%%' %progress
     print ''
 
-    '''A'''
     if O.iter%savePeriod==0:
         
         out_file=open(folder_name+'/A_progress=%.2f%%' %progress+".txt",'w')
         
-        spheres=[O.bodies[k] for k in range(3,len(O.bodies)) if O.bodies[k]!=None]
+        #make erosion
+        if erosion:
+  
+            erosion_height=0.9*max([O.bodies[k].state.pos[1] for k in range(3,len(O.bodies)) if O.bodies[k]!=None])
+                
+            spheres=Erosion(O,erosion_height)
+            
+        else:
+            
+            spheres=[O.bodies[k] for k in range(3,len(O.bodies))]
             
         RecordData(out_file,spheres)
         
-    '''B'''
     if O.iter%savePeriod==3*checkPeriod:
         
         #flag to deposit
@@ -482,7 +519,7 @@ def stopSimulation(deposit,
             
         else:
             
-            spheres=[O.bodies[k] for k in range(3,len(O.bodies)) if O.bodies[k]!=None]
+            spheres=[O.bodies[k] for k in range(3,len(O.bodies))]
         
         RecordData(out_file,spheres)
         
