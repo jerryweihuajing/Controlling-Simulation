@@ -20,7 +20,7 @@ exp_name=''
 
 case_name=direction
 
-deposit=True
+deposit=False
 
 deposit_thickness=20
 deposit_distance=100
@@ -39,7 +39,7 @@ if case_base>0:
         case_name+=' base-'+str(case_base*5)+'km'
     
 salt_distance=0
-salt_width=500
+salt_width=400
 
 if case_salt>0:
     
