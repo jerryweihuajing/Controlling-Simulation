@@ -22,10 +22,10 @@ case_name=direction
 
 deposit=True
 
-deposit_thickness=10
+deposit_thickness=20
 deposit_distance=100
-deposit_length=100
-deposit_period=3
+deposit_length=200
+deposit_period=1
 
 base_detachment=True
 salt_detachment=True
@@ -39,7 +39,7 @@ if case_base>0:
         case_name+=' base-'+str(case_base*5)+'km'
     
 salt_distance=0
-salt_width=100
+salt_width=500
 
 if case_salt>0:
     
