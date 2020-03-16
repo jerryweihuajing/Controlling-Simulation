@@ -20,31 +20,42 @@ exp_name=''
 
 case_name=direction
 
+erosion=False
 deposit=False
 swelling=False
+fault=True
+base_detachment=False
+salt_detachment=False
 
 deposit_thickness=10
 deposit_distance=300
 deposit_length=100
 deposit_period=1
 
-base_detachment=False
-salt_detachment=False
+start_depth=50
+end_depth=0
+fault_distance=50
+inclination=-30
 
+salt_distance=0
+salt_width=100
+
+if fault:
+    
+    case_name+=' fault '+str(inclination)
+    case_name+=' sD='+str(start_depth)
+    case_name+=' eD='+str(end_depth)
+    case_name+=' fD='+str(fault_distance)
+    
 if swelling:
     
     case_name+=' swelling'
     
-erosion=False
-
 if case_base>0:
     
     if base_detachment:
         
         case_name+=' base-'+str(case_base*5)+'km'
-    
-salt_distance=0
-salt_width=200
 
 if case_salt>0:
     
@@ -52,8 +63,8 @@ if case_salt>0:
         
         case_name+=' salt-'+str(case_salt*5)+'km'
 
-        case_name+=' SD='+str(salt_distance)
-        case_name+=' SW='+str(salt_width)
+        case_name+=' sD='+str(salt_distance)
+        case_name+=' sW='+str(salt_width)
     
 if exp_name!='':
 
@@ -63,10 +74,10 @@ if deposit:
     
     case_name+=' with deposit'
     
-    case_name+=' DT='+str(deposit_thickness)
-    case_name+=' DD='+str(deposit_distance)
-    case_name+=' DL='+str(deposit_length)
-    case_name+=' DP='+str(deposit_period)
+    case_name+=' dT='+str(deposit_thickness)
+    case_name+=' dD='+str(deposit_distance)
+    case_name+=' dL='+str(deposit_length)
+    case_name+=' dP='+str(deposit_period)
     
 if erosion:
     
@@ -172,7 +183,7 @@ maxl = max([O.bodies[i].state.pos[0] for i in id_spheres])
 maxh = max([O.bodies[i].state.pos[1] for i in id_spheres])
 
 #defining engines -----
-savePeriod = int(1.6*8000/abs(v)) # save files for every iterPeriod steps
+savePeriod = int(8000/abs(v)) # save files for every iterPeriod steps
 checkPeriod = savePeriod/100 #int(savePeriod/5) #for print
 pre_thres = checkPeriod  #for deposition which is not already done
 
@@ -274,6 +285,27 @@ for k in range(int(box_length)):
         
         map_height_swelling[k]=0
         
+#map between y and x tuple
+map_fault_y_x={}
+
+k=np.tan(inclination*np.pi/180)
+
+if k>0:
+    
+    b=start_depth-k*(maxl-fault_distance)
+    
+if k<0:
+    
+    b=end_depth-k*(maxl-fault_distance)
+    
+fault_width=np.abs(3/np.sin(inclination*np.pi/180))
+
+for this_y in range(end_depth,start_depth):
+    
+    this_x=(this_y-b)/k
+    
+    map_fault_y_x[int(this_y)]=(this_x-fault_width/2,this_x+fault_width/2)
+
 #so many conditions
 for i in id_spheres:
 
@@ -281,16 +313,23 @@ for i in id_spheres:
 
     for k in range(n_layer):
 
-        if k*height_step<=O.bodies[i].state.pos[1]<=(k+1)*height_step:
+        this_x=O.bodies[i].state.pos[0]
+        this_y=O.bodies[i].state.pos[1]
+        
+        if k*height_step<=this_y<=(k+1)*height_step:
             
             O.bodies[i].shape.color = base_rgb_list[k]
             O.bodies[i].material = O.materials[m_rock]
                 
-    		#salt detachment
+            #salt detachment
             if salt_detachment:
                 
-                if maxh/2<=O.bodies[i].state.pos[1]<=maxh/2+height_salt and \
-                box_length-salt_distance-salt_width<=O.bodies[i].state.pos[0]<=box_length-salt_distance:
+                y_min=maxh/2
+                y_max=maxh/2+height_salt
+                x_min=maxl-salt_distance-salt_width
+                x_max=maxl-salt_distance
+                
+                if y_min<=this_y<=y_max and x_min<=this_x<=x_max:
     		
                     O.bodies[i].shape.color = rgb_detachment
                     O.bodies[i].material = O.materials[m_detachment]
@@ -298,8 +337,11 @@ for i in id_spheres:
             #swelling
             if swelling:
                 
-                if O.bodies[i].state.pos[1]<=map_height_swelling[int(O.bodies[i].state.pos[0])]:
-  
+                y_min=0
+                y_max=map_height_swelling[int(this_x)]
+                
+                if y_min<=this_y<=y_max:
+                    
                     O.bodies[i].shape.color = rgb_swelling
                     O.bodies[i].material = O.materials[m_swelling]
 
@@ -308,11 +350,26 @@ for i in id_spheres:
             #base detachment
             if base_detachment:
     
-                if 0<=O.bodies[i].state.pos[1]-map_height_swelling[int(O.bodies[i].state.pos[0])]<=height_base:
+                y_min=map_height_swelling[int(this_x)]
+                y_max=map_height_swelling[int(this_x)]+height_base
+                
+                if y_min<=this_y<=y_max:
                     
                     O.bodies[i].shape.color = rgb_detachment
                     O.bodies[i].material = O.materials[m_detachment]  
                     
+            if fault:
+                
+                if int(this_y) in list(map_fault_y_x.keys()):
+                    
+                    x_min=map_fault_y_x[int(this_y)][0]
+                    x_max=map_fault_y_x[int(this_y)][1]
+                        
+                    if x_min<=this_x<=x_max:
+      
+                        O.bodies[i].shape.color = rgb_detachment
+                        O.bodies[i].material = O.materials[m_detachment]  
+                
 print "The max height is %.3f" % maxh
 print "The max length is %.3f" % maxl
 
