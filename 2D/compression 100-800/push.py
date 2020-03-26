@@ -12,77 +12,80 @@ case_base=1
 case_salt=2
 
 v= .4 #default 0.4
-dfric=0.0 #default 0 
 n_layer=10
 
 direction='single'
-exp_name=''
+exp_name=direction
 
-case_name=direction
+case_name=''
 
 erosion=False
-deposit=False
+deposit=True
 swelling=False
 fault=True
-base_detachment=False
+base_detachment=True
 salt_detachment=False
 
 deposit_thickness=10
-deposit_distance=300
-deposit_length=100
+deposit_offset=200
+deposit_length=200
 deposit_period=1
 
 start_depth=50
 end_depth=0
-fault_distance=50
-inclination=-30
+fault_offset=200
+inclination=30
 
-salt_distance=0
-salt_width=100
-
-if fault:
-    
-    case_name+=' fault '+str(inclination)
-    case_name+=' sD='+str(start_depth)
-    case_name+=' eD='+str(end_depth)
-    case_name+=' fD='+str(fault_distance)
+salt_offset=0
+salt_width=800
     
 if swelling:
-    
-    case_name+=' swelling'
+
+    exp_name+=' swelling'
     
 if case_base>0:
     
     if base_detachment:
-        
-        case_name+=' base-'+str(case_base*5)+'km'
+	
+        exp_name+=' base'
+		
+        case_name+=' bT='+str(case_base*5)
 
 if case_salt>0:
     
     if salt_detachment:
         
-        case_name+=' salt-'+str(case_salt*5)+'km'
-
-        case_name+=' sD='+str(salt_distance)
+        exp_name+=' salt'
+		
+        case_name+=' sT='+str(case_salt*5)
+        case_name+=' sO='+str(salt_offset)
         case_name+=' sW='+str(salt_width)
-    
-if exp_name!='':
 
-    case_name+=(' '+exp_name)
+if fault:
+    
+    exp_name+=' fault'
+	
+    case_name+=' fI='+str(inclination)
+    case_name+=' fO='+str(fault_offset)
+    case_name+=' fD='+str(end_depth)+'-'+str(start_depth)
 
 if deposit:
     
-    case_name+=' with deposit'
+    exp_name+=' deposit'
     
     case_name+=' dT='+str(deposit_thickness)
-    case_name+=' dD='+str(deposit_distance)
+    case_name+=' dO='+str(deposit_offset)
     case_name+=' dL='+str(deposit_length)
     case_name+=' dP='+str(deposit_period)
     
 if erosion:
     
-    case_name+=' with erosion'
-    
+    exp_name+=' erosion'
+	
+if exp_name!='':
+
+    case_name=exp_name+' '+case_name
+
 def GenerateFold(path):
 
     path=path.strip()
@@ -109,9 +112,9 @@ rreps = 0.06
 rden = 2500 #2500
 
 #setting detachment materials ----- 
-dyoung = 2e8 #csy: 2e7 fyj: 2e8
+dyoung = 2e7 #csy: 2e7 fyj: 2e8
 dpoisson = 0
-dfrictAng = math.atan(dfric) 
+dfrictAng = math.atan(0) 
 dreps = 0.001
 dden = 2100 #csy: 2100 fyj:2300
 
@@ -183,7 +186,7 @@ maxl = max([O.bodies[i].state.pos[0] for i in id_spheres])
 maxh = max([O.bodies[i].state.pos[1] for i in id_spheres])
 
 #defining engines -----
-savePeriod = int(8000/abs(v)) # save files for every iterPeriod steps
+savePeriod = int(8000*1.6/abs(v)) # save files for every iterPeriod steps
 checkPeriod = savePeriod/100 #int(savePeriod/5) #for print
 pre_thres = checkPeriod  #for deposition which is not already done
 
@@ -292,11 +295,11 @@ k=np.tan(inclination*np.pi/180)
 
 if k>0:
     
-    b=start_depth-k*(maxl-fault_distance)
+    b=start_depth-k*(maxl-fault_offset)
     
 if k<0:
     
-    b=end_depth-k*(maxl-fault_distance)
+    b=end_depth-k*(maxl-fault_offset)
     
 fault_width=np.abs(3/np.sin(inclination*np.pi/180))
 
@@ -326,8 +329,8 @@ for i in id_spheres:
                 
                 y_min=maxh/2
                 y_max=maxh/2+height_salt
-                x_min=maxl-salt_distance-salt_width
-                x_max=maxl-salt_distance
+                x_min=maxl-salt_offset-salt_width
+                x_max=maxl-salt_offset
                 
                 if y_min<=this_y<=y_max and x_min<=this_x<=x_max:
     		
@@ -519,7 +522,7 @@ def startPushing():
                             erosion,\
                             deposit_thickness,\
                             deposit_length,\
-                            deposit_distance,\
+                            deposit_offset,\
                             deposit_period)'
 
     O.engines = O.engines
@@ -532,7 +535,7 @@ def stopSimulation(deposit,
                    erosion,
                    deposit_thickness,
                    deposit_length,
-                   deposit_distance,
+                   deposit_offset,
                    deposit_period):
     
     offset=box_length-(wall_right.state.pos[0]-wall_left.state.pos[0]) #wall ypos
@@ -599,8 +602,8 @@ def stopSimulation(deposit,
                     
         	#adding deposit -----
             deposit_pack = pack.SpherePack()
-            deposit_pack.makeCloud((x_max-deposit_distance-deposit_length, y_max, 0.0),
-                                   (x_max-deposit_distance, y_max+2*deposit_thickness,0),
+            deposit_pack.makeCloud((x_max-deposit_offset-deposit_length, y_max, 0),
+                                   (x_max-deposit_offset, y_max+2*deposit_thickness,0),
                                    rMean = 1, rRelFuzz = 0.2)
             deposit_pack.toSimulation(material = m_rock)
     
