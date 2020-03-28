@@ -110,6 +110,7 @@ O.bodies.append(wall_right)
 O.bodies.append(wall_bottom)
 
 #adding deposit -----
+#spheres = ymport.text('./standard sample.txt')
 spheres = ymport.text('./sample.txt')
 
 #list object
