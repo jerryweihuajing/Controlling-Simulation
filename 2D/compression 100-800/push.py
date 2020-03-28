@@ -20,25 +20,40 @@ exp_name=direction
 case_name=''
 
 erosion=False
+<<<<<<< HEAD
 deposit=False
 uplift=False
 fault=False
+=======
+deposit=True
+swelling=False
+fault=True
+>>>>>>> 92256b23e816542cab62fbbb15fda965527fe11d
 base_detachment=True
 salt_detachment=False
 
 deposit_thickness=10
 deposit_offset=200
+<<<<<<< HEAD
 deposit_width=200
 deposit_period=1
 
 start_depth=50
 end_depth=10
+=======
+deposit_length=200
+deposit_period=1
+
+start_depth=50
+end_depth=0
+>>>>>>> 92256b23e816542cab62fbbb15fda965527fe11d
 fault_offset=200
 inclination=30
 
 salt_offset=0
 salt_width=800
     
+<<<<<<< HEAD
 uplift_height=maxh*0.3
 uplift_length=maxl*0.7
 uplift_offset=100
@@ -46,6 +61,11 @@ uplift_offset=100
 if uplift:
 
     exp_name+=' uplift'
+=======
+if swelling:
+
+    exp_name+=' swelling'
+>>>>>>> 92256b23e816542cab62fbbb15fda965527fe11d
     
 	
 if case_base>0:
@@ -80,7 +100,11 @@ if deposit:
     
     case_name+=' dT='+str(deposit_thickness)
     case_name+=' dO='+str(deposit_offset)
+<<<<<<< HEAD
     case_name+=' dW='+str(deposit_width)
+=======
+    case_name+=' dL='+str(deposit_length)
+>>>>>>> 92256b23e816542cab62fbbb15fda965527fe11d
     case_name+=' dP='+str(deposit_period)
     
 if erosion:
@@ -89,7 +113,11 @@ if erosion:
 	
 if exp_name!='':
 
+<<<<<<< HEAD
     case_name=exp_name+case_name
+=======
+    case_name=exp_name+' '+case_name
+>>>>>>> 92256b23e816542cab62fbbb15fda965527fe11d
 
 def GenerateFold(path):
 
@@ -523,7 +551,11 @@ def startPushing():
     controller.command = 'stopSimulation(deposit,\
                             erosion,\
                             deposit_thickness,\
+<<<<<<< HEAD
                             deposit_width,\
+=======
+                            deposit_length,\
+>>>>>>> 92256b23e816542cab62fbbb15fda965527fe11d
                             deposit_offset,\
                             deposit_period)'
 
@@ -536,7 +568,11 @@ def startPushing():
 def stopSimulation(deposit,
                    erosion,
                    deposit_thickness,
+<<<<<<< HEAD
                    deposit_width,
+=======
+                   deposit_length,
+>>>>>>> 92256b23e816542cab62fbbb15fda965527fe11d
                    deposit_offset,
                    deposit_period):
     
@@ -604,7 +640,11 @@ def stopSimulation(deposit,
                     
         	#adding deposit -----
             deposit_pack = pack.SpherePack()
+<<<<<<< HEAD
             deposit_pack.makeCloud((x_max-deposit_offset-deposit_width, y_max, 0),
+=======
+            deposit_pack.makeCloud((x_max-deposit_offset-deposit_length, y_max, 0),
+>>>>>>> 92256b23e816542cab62fbbb15fda965527fe11d
                                    (x_max-deposit_offset, y_max+2*deposit_thickness,0),
                                    rMean = 1, rRelFuzz = 0.2)
             deposit_pack.toSimulation(material = m_rock)
