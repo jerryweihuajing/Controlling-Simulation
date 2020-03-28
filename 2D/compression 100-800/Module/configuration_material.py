@@ -11,6 +11,8 @@ Created on Sat Mar 28 21:33:04 2020
 
 import math
 
+from yade.wrapper import *
+
 #setting frict materials -----
 fyoung = 8e9
 fpoisson = 0.25

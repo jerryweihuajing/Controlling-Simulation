@@ -9,6 +9,11 @@ Created on Sat Mar 28 22:23:27 2020
 @title：Operation-Record
 """
 
+import math
+
+from yade._utils import *
+from yade.wrapper import *
+
 def RecordData(out_file,which_spheres):
     
     print ''
@@ -22,7 +27,7 @@ def RecordData(out_file,which_spheres):
 
     for this_sphere in which_spheres:
 
-        this_stress=stress[this_sphere.id]*4.*pi/3.*this_sphere.shape.radius**3/TW.volume(this_sphere.id)
+        this_stress=stress[this_sphere.id]*4.*math.pi/3.*this_sphere.shape.radius**3/TW.volume(this_sphere.id)
 
 	    #print(this_stress)
 	    

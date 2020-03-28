@@ -9,6 +9,8 @@ Created on Sat Mar 28 22:02:03 2020
 @title：Configuration-Container
 """
 
+from yade import geom,utils
+
 from configuration_material import m_wall
 
 #building boxes -----

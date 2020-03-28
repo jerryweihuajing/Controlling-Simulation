@@ -9,6 +9,9 @@ Created on Sat Mar 28 22:07:10 2020
 @title：Configuration-Motion
 """
 
+from yade import utils
+from yade.wrapper import *
+
 v= .4 #default 0.4
 
 #defining engines -----
@@ -32,8 +35,8 @@ PyRunner(command = 'startPushing()', iterPeriod = checkPeriod, label = 'controll
 #snapshot = qt.SnapshotEngine(fileBase='-',iterPeriod=savePeriod)
 #vtkRecorder = VTKRecorder(fileName='0.00%-',recorders=['all'],iterPeriod=savePeriod)
 
-O.dt =3* utils.PWaveTimeStep()
-#O.dt=0.0027
+#O.dt =3* utils.PWaveTimeStep()
+O.dt=0.0027
 
 TW1 = TesselationWrapper() #TW1 records cumulative strain data
 TW1.setState(0)

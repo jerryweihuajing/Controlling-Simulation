@@ -9,7 +9,7 @@ Created on Sat Mar 28 23:18:01 2020
 @title：Configuration-Variable
 """
 
-import operation_path as O_P
+from operation_path import *
 
 from configuration_base import *
 from configuration_salt import *
@@ -18,8 +18,10 @@ from configuration_uplift import *
 from configuration_erosion import *
 from configuration_deposit import *
 
-exp_name='single'
-case_name=''
+from configuration_model import *
+from operation_record import *
+
+direction='single'
 
 erosion=False
 deposit=False
@@ -28,6 +30,8 @@ fault=False
 base=True
 salt=False
 
+exp_name=direction
+case_name=''
 
 list_factor=[base,
              salt,
@@ -56,6 +60,11 @@ case_name=exp_name+case_name
 folder_name='./input//'+case_name
 
 #Generate Fold
-O_P.GenerateFold(folder_name)
+GenerateFold(folder_name)
 
 out_file=open(folder_name+'/A_progress=0.00%.txt','w')
+
+RecordData(out_file,spheres)
+
+Model2Spheres()
+Base2Spheres()

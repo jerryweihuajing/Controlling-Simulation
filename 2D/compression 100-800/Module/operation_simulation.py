@@ -13,7 +13,11 @@ from configuration_container import *
 from configuration_motion import *
 from configuration_deposit import *
 from configuration_erosion import *
-from configuration_record import *
+from configuration_variable import *
+
+from operation_record import *
+
+from minieigen import *
 
 #pushing stage -----
 def startPushing():

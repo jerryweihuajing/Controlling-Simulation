@@ -9,7 +9,7 @@ Created on Sat Mar 28 22:09:18 2020
 @title：Configuration-Color
 """
 
-from configuration_spheres import n_layer
+from configuration_model import n_layer
 
 #yade rgb list
 yade_rgb_list=[[0.50,0.50,0.50],

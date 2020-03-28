@@ -9,7 +9,7 @@ Created on Sat Mar 28 22:02:32 2020
 @title：Configuration-Uplift
 """
 
-from configuration_container import box_length
+from configuration_model import maxl
 
 uplift_height=20
 uplift_width=100
@@ -20,7 +20,7 @@ k_uplift=uplift_height/uplift_width
 
 map_height_uplift={}
 
-for k in range(int(box_length)):
+for k in range(int(maxl)):
     
     if k<uplift_width:
         

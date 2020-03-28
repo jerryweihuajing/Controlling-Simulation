@@ -35,10 +35,10 @@ height_step=maxh/(n_layer)
 print("The max height is %.3f" % maxh)
 print("The max length is %.3f" % maxl)
 
-def ModelSphere():
+def Model2Spheres():
     
     from configuration_color import base_rgb_list
-    from configuration_matetrial import m_rock
+    from configuration_material import m_rock
     from configuration_uplift import map_height_uplift
     
     #so many conditions

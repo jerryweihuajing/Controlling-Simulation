@@ -9,7 +9,7 @@ Created on Sat Mar 28 21:31:53 2020
 @title：Configuration-Base
 """
 
-base_thickness=10
+base_thickness=2.4
 
 def BaseName(exp_name,case_name):
     
@@ -19,24 +19,17 @@ def BaseName(exp_name,case_name):
     
     return exp_name,case_name
 
-def BaseSpheres():
+def Base2Spheres():
     
-    from configuration_uplift import map_height_uplift
-    from configuration_sphere import id_spheres
+    from configuration_model import id_spheres
     from configuration_color import rgb_detachment
-    from configuration_matetrial import m_detachment
+    from configuration_material import m_detachment
     
     for i in id_spheres:
-    
-        #O.bodies[i].state.blockedDOFs='XYz'
-        
-        this_x=O.bodies[i].state.pos[0]
+
         this_y=O.bodies[i].state.pos[1]
-        
-        y_min=map_height_uplift[int(this_x)]
-        y_max=map_height_uplift[int(this_x)]+base_thickness
-        
-        if y_min<=this_y<=y_max:
+ 
+        if this_y<=base_thickness:
             
             O.bodies[i].shape.color = rgb_detachment
             O.bodies[i].material = O.materials[m_detachment]  

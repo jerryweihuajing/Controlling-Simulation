@@ -11,7 +11,7 @@ Created on Sat Mar 28 21:44:09 2020
 
 import numpy as np
 
-from configuration_sphere import maxl
+from configuration_model import maxl
 
 fault_start_depth=50
 fault_end_depth=0
