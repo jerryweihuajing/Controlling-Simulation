@@ -70,7 +70,7 @@ def Uplift2Spheres():
     from configuration_model import id_spheres
     from configuration_color import rgb_uplift
     from configuration_uplift import map_height_uplift
-    from configuration_material_compression import m_uplift
+    from configuration_material import m_uplift
       
     for i in id_spheres:
     

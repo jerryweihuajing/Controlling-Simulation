@@ -69,8 +69,8 @@ def Erosion():
             new_spheres.append(O.bodies[k])
             
     print ''
-    print 'before delete'
-    print 'amount of spheres:',len(old_spheres)   
+    print '-> before delete'
+    print '-> amount of spheres:',len(old_spheres)   
     
     #delete from O.bodies
     for this_idx in idx_to_delete:
@@ -78,8 +78,8 @@ def Erosion():
         O.bodies.erase(this_idx)
           
     print ''
-    print 'after delete'
-    print 'amount of spheres:',len(new_spheres)
+    print '-> after delete'
+    print '-> amount of spheres:',len(new_spheres)
     
 #------------------------------------------------------------------------------
 """

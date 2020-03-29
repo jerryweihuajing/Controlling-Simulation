@@ -54,13 +54,13 @@ def Deposit():
     print '-- Deposit'
     
     from configuration_color import rgb_green
-    from configuration_material_compression import m_rock
+    from configuration_material import m_rock
     
     old_spheres=[O.bodies[k] for k in range(3,len(O.bodies)) if O.bodies[k]!=None]
     
     print ''
-    print 'before adding'
-    print 'amount of spheres:',len(old_spheres) 
+    print '-> before adding'
+    print '-> amount of spheres:',len(old_spheres) 
     
     x_max = max([this_sphere.state.pos[0] for this_sphere in old_spheres])
     y_max = max([this_sphere.state.pos[1] for this_sphere in old_spheres])
@@ -77,7 +77,7 @@ def Deposit():
     deposit_pack.toSimulation(material = m_rock)
     
     print ''
-    print 'amount of deposit',len(deposit_pack)
+    print '-> amount of deposit',len(deposit_pack)
     
     spheres_deposit=[O.bodies[idx] for idx in range(len(O.bodies)-len(deposit_pack),len(O.bodies))]
         
@@ -88,8 +88,8 @@ def Deposit():
     new_spheres=[O.bodies[k] for k in range(3,len(O.bodies)) if O.bodies[k]!=None]
     
     print ''
-    print 'after adding'
-    print 'amount of spheres:',len(new_spheres)
+    print '-> after adding'
+    print '-> amount of spheres:',len(new_spheres)
     
 #------------------------------------------------------------------------------
 """
