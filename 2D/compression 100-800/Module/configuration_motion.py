@@ -12,7 +12,7 @@ Created on Sat Mar 28 22:07:10 2020
 from yade import utils
 from yade.wrapper import *
 
-v= 4 #default 0.4
+v= .4 #default 0.4
 
 #defining engines -----
 savePeriod = int(8000*1.6/abs(v)) # save files for every iterPeriod steps
@@ -35,8 +35,8 @@ PyRunner(command = 'StartPushing()', iterPeriod = checkPeriod, label = 'controll
 #snapshot = qt.SnapshotEngine(fileBase='-',iterPeriod=savePeriod)
 #vtkRecorder = VTKRecorder(fileName='0.00%-',recorders=['all'],iterPeriod=savePeriod)
 
-#O.dt =3* utils.PWaveTimeStep()
-O.dt=0.0027
+O.dt =3* utils.PWaveTimeStep()
+#O.dt=0.0027
 
 #TW1 = TesselationWrapper() #TW1 records cumulative strain data
 #TW1.setState(0)
