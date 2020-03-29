@@ -14,6 +14,17 @@ import math
 from yade._utils import *
 from yade.wrapper import *
 
+#------------------------------------------------------------------------------
+"""
+Record all data via txt
+
+Args:
+    out_file: output file
+    which_spheres: spheres object tobe recorded
+
+Returns:
+    None
+"""
 def RecordData(out_file,which_spheres):
     
     print ''

@@ -11,6 +11,17 @@ Created on Sat Mar 28 21:31:53 2020
 
 base_thickness=2.4
 
+#------------------------------------------------------------------------------
+"""
+Expand case name from the factor
+
+Args:
+    exp_name: original exp name
+    case_name: original case name
+
+Returns:
+    newly case and exp name
+"""  
 def BaseName(exp_name,case_name):
     
     exp_name+=' base'
@@ -19,6 +30,16 @@ def BaseName(exp_name,case_name):
     
     return exp_name,case_name
 
+#------------------------------------------------------------------------------
+"""
+Assign the parameter to spheres model
+
+Args:
+    None
+
+Returns:
+    None
+"""
 def Base2Spheres():
     
     from configuration_model import id_spheres

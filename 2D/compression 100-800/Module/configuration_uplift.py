@@ -18,6 +18,7 @@ uplift_offset=100
 #define uplift
 k_uplift=uplift_height/uplift_width
 
+#map between x and y
 map_height_uplift={}
 
 for k in range(int(maxl)):
@@ -29,7 +30,18 @@ for k in range(int(maxl)):
     else:
         
         map_height_uplift[k]=0
-        
+
+#------------------------------------------------------------------------------
+"""
+Expand case name from the factor
+
+Args:
+    exp_name: original exp name
+    case_name: original case name
+
+Returns:
+    newly case and exp name
+"""
 def UpliftName(exp_name,case_name):
     
     exp_name+=' uplift'
@@ -39,8 +51,18 @@ def UpliftName(exp_name,case_name):
     case_name+=' uO='+str(uplift_offset)
     
     return exp_name,case_name
- 
-def UpliftSpheres():
+
+#------------------------------------------------------------------------------
+"""
+Assign the parameter to spheres model
+
+Args:
+    None
+
+Returns:
+    None
+"""
+def Uplift2Spheres():
     
     from configuration_model import id_spheres
     from configuration_color import rgb_uplift

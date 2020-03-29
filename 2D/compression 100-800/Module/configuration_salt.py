@@ -14,6 +14,17 @@ salt_depth=25
 salt_offset=0
 salt_width=800
 
+#------------------------------------------------------------------------------
+"""
+Expand case name from the factor
+
+Args:
+    exp_name: original exp name
+    case_name: original case name
+
+Returns:
+    newly case and exp name
+"""
 def SaltName(exp_name,case_name):
     
     exp_name+=' salt'
@@ -25,7 +36,17 @@ def SaltName(exp_name,case_name):
     
     return exp_name,case_name
 
-def FaultSpheres():
+#------------------------------------------------------------------------------
+"""
+Assign the parameter to spheres model
+
+Args:
+    None
+
+Returns:
+    None
+"""
+def Salt2Spheres():
     
     from configuration_model import id_spheres,maxl
     from configuration_color import rgb_detachment

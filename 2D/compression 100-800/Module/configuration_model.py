@@ -11,6 +11,7 @@ Created on Sat Mar 28 22:22:33 2020
 
 from yade import ymport
 
+#num of layer
 n_layer=10
 
 #adding deposit -----
@@ -35,6 +36,16 @@ height_step=maxh/(n_layer)
 print("The max height is %.3f" % maxh)
 print("The max length is %.3f" % maxl)
 
+#------------------------------------------------------------------------------
+"""
+Assign the parameter to spheres model
+
+Args:
+    None
+
+Returns:
+    None
+"""
 def Model2Spheres():
     
     from configuration_color import base_rgb_list

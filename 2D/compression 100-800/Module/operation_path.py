@@ -11,6 +11,16 @@ Created on Sat Mar 28 21:37:08 2020
 
 import os
 
+#------------------------------------------------------------------------------
+"""
+Generate folder based on the given path
+
+Args:
+    path: path to generate folder
+
+Returns:
+    None
+"""
 def GenerateFold(path):
 
     path=path.strip()

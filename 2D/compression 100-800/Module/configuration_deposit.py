@@ -14,6 +14,17 @@ deposit_offset=200
 deposit_width=200
 deposit_period=1
 
+#------------------------------------------------------------------------------
+"""
+Expand case name from the factor
+
+Args:
+    exp_name: original exp name
+    case_name: original case name
+
+Returns:
+    newly case and exp name
+"""
 def DepositName(exp_name,case_name):
     
     exp_name+=' deposit'
@@ -24,3 +35,40 @@ def DepositName(exp_name,case_name):
     case_name+=' dP='+str(deposit_period)
     
     return exp_name,case_name
+
+#------------------------------------------------------------------------------
+"""
+Deposit spheres
+
+Args:
+    spheres: sphere objects as base
+
+Returns:
+    newly case and exp name
+"""
+def Deposit(spheres):
+    
+    from configuration_color import rgb_green
+    from configuration_material import m_rock_compression
+    
+    x_max = max([this_sphere.state.pos[0] for this_sphere in spheres])
+    y_max = max([this_sphere.state.pos[1] for this_sphere in spheres])
+    x_min = min([this_sphere.state.pos[0] for this_sphere in spheres])
+    y_min = min([this_sphere.state.pos[1] for this_sphere in spheres])
+            
+    #adding deposit -----
+    deposit_pack = pack.SpherePack()
+    
+    deposit_pack.makeCloud((x_max-deposit_offset-deposit_width, y_max, 0),
+                           (x_max-deposit_offset, y_max+2*deposit_thickness,0),
+                           rMean = 1, rRelFuzz = 0.2)
+    
+    deposit_pack.toSimulation(material = m_rock_compression)
+    
+    print 'amount of deposit',len(deposit_pack)
+    
+    spheres_deposit=[O.bodies[idx] for idx in range(len(O.bodies)-len(deposit_pack),len(O.bodies))]
+        
+    for this_sphere in spheres_deposit:
+        
+        this_sphere.shape.color=rgb_green

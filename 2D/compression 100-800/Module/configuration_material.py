@@ -38,12 +38,12 @@ m_wall = O.materials.append(FrictMat(young = fyoung,
                                      frictionAngle = frictAng,
                                      density = fden))
                                                                        
-m_rock = O.materials.append(CpmMat(young = ryoung,
-                                   poisson = rpoisson,
-                                   frictionAngle = rfrictAng,
-                                   epsCrackOnset = rreps,
-                                   density = rden,
-                                   relDuctility = 0))
+m_rock_compression = O.materials.append(CpmMat(young = ryoung,
+                                               poisson = rpoisson,
+                                               frictionAngle = rfrictAng,
+                                               epsCrackOnset = rreps,
+                                               density = rden,
+                                               relDuctility = 0))
 
 m_detachment = O.materials.append(CpmMat(young = dyoung,
                                          poisson = dpoisson,
@@ -52,7 +52,6 @@ m_detachment = O.materials.append(CpmMat(young = dyoung,
                                          density = dden,
                                          relDuctility = 0))
 
-#uplift
 m_uplift = O.materials.append(CpmMat(young = 100*ryoung,
                                      poisson = rpoisson,
                                      frictionAngle = rfrictAng,

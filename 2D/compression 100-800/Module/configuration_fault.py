@@ -38,7 +38,18 @@ for this_y in range(fault_end_depth,fault_start_depth):
     this_x=(this_y-b)/k
     
     map_fault_y_x[int(this_y)]=(this_x-fault_width/2,this_x+fault_width/2)
-    
+
+#------------------------------------------------------------------------------
+"""
+Expand case name from the factor
+
+Args:
+    exp_name: original exp name
+    case_name: original case name
+
+Returns:
+    newly case and exp name
+"""   
 def FaultName(exp_name,case_name):
     
     exp_name+=' fault'
@@ -48,7 +59,17 @@ def FaultName(exp_name,case_name):
     case_name+=' fD='+str(fault_end_depth)+'-'+str(fault_start_depth)
     
     return exp_name,case_name
-    
+
+#------------------------------------------------------------------------------
+"""
+Assign the parameter to spheres model
+
+Args:
+    None
+
+Returns:
+    None
+"""    
 def FaultSpheres():
     
     from configuration_model import id_spheres

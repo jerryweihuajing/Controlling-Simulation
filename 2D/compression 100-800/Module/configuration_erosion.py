@@ -9,28 +9,52 @@ Created on Sat Mar 28 21:57:13 2020
 @title：Configuration-Erosion
 """
 
+erosion_period=1
+
+#------------------------------------------------------------------------------
+"""
+Expand case name from the factor
+
+Args:
+    exp_name: original exp name
+    case_name: original case name
+
+Returns:
+    newly case and exp name
+"""
 def ErosionName(exp_name,case_name):
     
     exp_name+=' erosion'
     
     return exp_name,case_name
 
+#------------------------------------------------------------------------------
+"""
+Erode spheres who are higher than y_max
+
+Args:
+    which_O: O object
+    y_max: max height
+    
+Returns:
+    spheres object
+"""
 def Erosion(which_O,y_max):
     
-    old_bodies=[1 for this_body in which_O.bodies if this_body!=None]
+    old_bodies=[1 for this_body in O.bodies if this_body!=None]
     
     spheres=[]  
     
     #create idx list for deleting
     idx_to_delete=[]
     
-    for k in range(3,len(which_O.bodies)):
+    for k in range(3,len(O.bodies)):
 
-        if which_O.bodies[k]==None:
+        if O.bodies[k]==None:
             
             continue
         
-        if which_O.bodies[k].state.pos[1]>y_max:
+        if O.bodies[k].state.pos[1]>y_max:
         
             idx_to_delete.append(k)
             
@@ -45,9 +69,9 @@ def Erosion(which_O,y_max):
     #delete from O.bodies
     for this_idx in idx_to_delete:
         
-        which_O.bodies.erase(this_idx)
+        O.bodies.erase(this_idx)
         
-    new_bodies=[1 for this_body in which_O.bodies if this_body!=None]
+    new_bodies=[1 for this_body in O.bodies if this_body!=None]
     
     print ''
     print 'after delete'

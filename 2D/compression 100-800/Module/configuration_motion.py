@@ -12,7 +12,7 @@ Created on Sat Mar 28 22:07:10 2020
 from yade import utils
 from yade.wrapper import *
 
-v= .4 #default 0.4
+v= 4 #default 0.4
 
 #defining engines -----
 savePeriod = int(8000*1.6/abs(v)) # save files for every iterPeriod steps
