@@ -64,10 +64,13 @@ Returns:
 """
 def Uplift2Spheres():
     
+    print ''
+    print '-- Uplift to Spheres'
+    
     from configuration_model import id_spheres
     from configuration_color import rgb_uplift
-    from configuration_matetrial import m_uplift
     from configuration_uplift import map_height_uplift
+    from configuration_compression_matetrial import m_uplift
       
     for i in id_spheres:
     

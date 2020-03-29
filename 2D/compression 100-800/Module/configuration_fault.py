@@ -70,7 +70,9 @@ Args:
 Returns:
     None
 """    
-def FaultSpheres():
+def Fault2Spheres():
+    
+    print '-- Fault to Spheres'
     
     from configuration_model import id_spheres
     from configuration_color import rgb_detachment

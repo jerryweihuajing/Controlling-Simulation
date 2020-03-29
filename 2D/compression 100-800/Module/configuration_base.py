@@ -42,6 +42,8 @@ Returns:
 """
 def Base2Spheres():
     
+    print '-- Base to Spheres'
+    
     from configuration_model import id_spheres
     from configuration_color import rgb_detachment
     from configuration_material import m_detachment

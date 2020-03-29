@@ -79,3 +79,17 @@ def Erosion(which_O,y_max):
     print 'amount of spheres:',len(spheres)
     
     return spheres
+
+#------------------------------------------------------------------------------
+"""
+Assign the parameter to spheres model
+
+Args:
+    None
+
+Returns:
+    None
+"""
+def Erosion2Spheres():
+    
+    print '-- Erosion to Spheres'

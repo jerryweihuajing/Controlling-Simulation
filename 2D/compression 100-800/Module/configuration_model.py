@@ -48,9 +48,12 @@ Returns:
 """
 def Model2Spheres():
     
+    print ''
+    print 'Model to Spheres'
+    
     from configuration_color import base_rgb_list
-    from configuration_material import m_rock
     from configuration_uplift import map_height_uplift
+    from configuration_material_compression import m_rock
     
     #so many conditions
     for i in id_spheres:

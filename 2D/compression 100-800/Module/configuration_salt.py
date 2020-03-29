@@ -48,9 +48,12 @@ Returns:
 """
 def Salt2Spheres():
     
+    print ''
+    print '-- Salt to Spheres'
+    
     from configuration_model import id_spheres,maxl
     from configuration_color import rgb_detachment
-    from configuration_matetrial import m_detachment
+    from configuration_compression_matetrial import m_detachment
     
     y_min=salt_depth
     y_max=salt_depth+salt_thickness

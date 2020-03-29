@@ -72,3 +72,17 @@ def Deposit(spheres):
     for this_sphere in spheres_deposit:
         
         this_sphere.shape.color=rgb_green
+        
+#------------------------------------------------------------------------------
+"""
+Assign the parameter to spheres model
+
+Args:
+    None
+
+Returns:
+    None
+"""
+def Deposit2Spheres():
+    
+    print '-- Deposit to Spheres'

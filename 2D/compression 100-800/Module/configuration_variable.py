@@ -25,10 +25,10 @@ direction='single'
 
 base=True
 salt=True
-fault=False
-uplift=False
-erosion=False
-deposit=False
+fault=True
+uplift=True
+erosion=True
+deposit=True
 
 exp_name=direction
 case_name=''
