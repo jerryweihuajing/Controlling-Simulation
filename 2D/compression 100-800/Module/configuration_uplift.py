@@ -15,22 +15,36 @@ uplift_height=20
 uplift_width=100
 uplift_offset=100
 
+#intercept of trapzoid
+intercept=50
+
+x_right_bottom=box_length-uplift_offset
+x_left_bottom=box_length-uplift_offset-uplift_width
+x_right_top=box_length-uplift_offset-intercept
+x_left_top=box_length-uplift_offset-uplift_width+intercept
+
 #define uplift
-k_uplift=uplift_height/uplift_width
+k_uplift=uplift_height/intercept
 
 #map between x and y
 map_height_uplift={}
 
 for k in range(int(box_length)):
     
-    if k<uplift_width:
-        
-        map_height_uplift[k]=uplift_height-k_uplift*k
+    map_height_uplift[k]=0
     
-    else:
+    if x_left_bottom<=k<=x_left_top:
         
-        map_height_uplift[k]=0
+        map_height_uplift[k]=(k-x_left_bottom)*k_uplift
+    
+    if x_left_top<=k<=x_right_top:
+        
+        map_height_uplift[k]=uplift_height
+        
+    if x_right_top<=k<=x_right_bottom:   
 
+        map_height_uplift[k]=(box_length-k-uplift_offset)*k_uplift
+        
 #------------------------------------------------------------------------------
 """
 Expand case name from the factor
