@@ -48,12 +48,28 @@ def Base2Spheres():
     from configuration_model import id_spheres
     from configuration_color import rgb_detachment
     from configuration_material import m_detachment
+    from configuration_variable import uplift
     
-    for i in id_spheres:
+    #with uplift
+    if uplift:
+        
+        from configuration_uplift import map_height_uplift
 
-        this_y=O.bodies[i].state.pos[1]
- 
-        if this_y<=base_thickness:
+        for i in id_spheres:
+    
+            this_x=O.bodies[i].state.pos[0]
+            this_y=O.bodies[i].state.pos[1]
+       
+            if map_height_uplift[int(this_x)]<=this_y<=map_height_uplift[int(this_x)]+base_thickness:
+                
+                O.bodies[i].shape.color = rgb_detachment
+                O.bodies[i].material = O.materials[m_detachment]  
+                
+    else:
+        
+        for i in id_spheres:
             
-            O.bodies[i].shape.color = rgb_detachment
-            O.bodies[i].material = O.materials[m_detachment]  
+            if this_y<=O.bodies[i].state.pos[1]:
+                
+                O.bodies[i].shape.color = rgb_detachment
+                O.bodies[i].material = O.materials[m_detachment]  

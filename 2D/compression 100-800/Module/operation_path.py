@@ -21,10 +21,10 @@ Args:
 Returns:
     None
 """
-def GenerateFold(path):
+def GenerateFolder(path):
 
     print ''
-    print '-- Generate Fold'
+    print '-- Generate Folder'
     
     path=path.strip()
    

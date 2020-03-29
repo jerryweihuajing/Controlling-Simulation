@@ -13,18 +13,19 @@ from configuration_container import box_length
 
 uplift_height=20
 uplift_width=100
-uplift_offset=100
+uplift_offset=300
 
 #intercept of trapzoid
-intercept=50
+intercept=uplift_width/2 #triangle
 
+#corner point of trapzoid
 x_right_bottom=box_length-uplift_offset
 x_left_bottom=box_length-uplift_offset-uplift_width
 x_right_top=box_length-uplift_offset-intercept
 x_left_top=box_length-uplift_offset-uplift_width+intercept
 
 #define uplift
-k_uplift=uplift_height/intercept
+k_uplift=float(uplift_height)/float(intercept)
 
 #map between x and y
 map_height_uplift={}
@@ -34,13 +35,13 @@ for k in range(int(box_length)):
     map_height_uplift[k]=0
     
     if x_left_bottom<=k<=x_left_top:
-        
+
         map_height_uplift[k]=(k-x_left_bottom)*k_uplift
     
     if x_left_top<=k<=x_right_top:
-        
+
         map_height_uplift[k]=uplift_height
-        
+  
     if x_right_top<=k<=x_right_bottom:   
 
         map_height_uplift[k]=(box_length-k-uplift_offset)*k_uplift
@@ -99,4 +100,5 @@ def Uplift2Spheres():
             O.bodies[i].shape.color = rgb_uplift
             O.bodies[i].material = O.materials[m_uplift]
 
+            #these spheres remain still
             O.bodies[i].state.blockedDOFs='xyz'

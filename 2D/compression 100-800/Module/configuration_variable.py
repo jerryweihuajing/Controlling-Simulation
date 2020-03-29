@@ -24,11 +24,11 @@ from configuration_deposit import *
 direction='single'
 
 base=True
-salt=True
-fault=True
+salt=False
+fault=False
 uplift=True
-erosion=True
-deposit=True
+erosion=False
+deposit=False
 
 exp_name=direction
 case_name=''
@@ -74,6 +74,6 @@ case_name=exp_name+case_name
 folder_name='./input//'+case_name
 
 #Generate Fold
-GenerateFold(folder_name)
+GenerateFolder(folder_name)
 
 RecordData(open(folder_name+'/A_progress=0.00%.txt','w'))
