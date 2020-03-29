@@ -20,12 +20,13 @@ Record all data via txt
 
 Args:
     out_file: output file
-    which_spheres: spheres object tobe recorded
-
+    
 Returns:
     None
 """
-def RecordData(out_file,which_spheres):
+def RecordData(out_file):
+    
+    which_spheres=[O.bodies[k] for k in range(3,len(O.bodies)) if O.bodies[k]!=None]
     
     print ''
     print 'Record Data'

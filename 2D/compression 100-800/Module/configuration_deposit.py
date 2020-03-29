@@ -9,6 +9,8 @@ Created on Sat Mar 28 21:54:49 2020
 @title：Configuration-Deposit
 """
 
+from yade import pack
+
 deposit_thickness=10
 deposit_offset=200
 deposit_width=200
@@ -46,7 +48,7 @@ Args:
 Returns:
     newly case and exp name
 """
-def Deposit(spheres):
+def Deposit():
     
     print ''
     print '-- Deposit'
@@ -54,10 +56,16 @@ def Deposit(spheres):
     from configuration_color import rgb_green
     from configuration_material_compression import m_rock
     
-    x_max = max([this_sphere.state.pos[0] for this_sphere in spheres])
-    y_max = max([this_sphere.state.pos[1] for this_sphere in spheres])
-    x_min = min([this_sphere.state.pos[0] for this_sphere in spheres])
-    y_min = min([this_sphere.state.pos[1] for this_sphere in spheres])
+    old_spheres=[O.bodies[k] for k in range(3,len(O.bodies)) if O.bodies[k]!=None]
+    
+    print ''
+    print 'before adding'
+    print 'amount of spheres:',len(old_spheres) 
+    
+    x_max = max([this_sphere.state.pos[0] for this_sphere in old_spheres])
+    y_max = max([this_sphere.state.pos[1] for this_sphere in old_spheres])
+    x_min = min([this_sphere.state.pos[0] for this_sphere in old_spheres])
+    y_min = min([this_sphere.state.pos[1] for this_sphere in old_spheres])
             
     #adding deposit -----
     deposit_pack = pack.SpherePack()
@@ -68,6 +76,7 @@ def Deposit(spheres):
     
     deposit_pack.toSimulation(material = m_rock)
     
+    print ''
     print 'amount of deposit',len(deposit_pack)
     
     spheres_deposit=[O.bodies[idx] for idx in range(len(O.bodies)-len(deposit_pack),len(O.bodies))]
@@ -76,6 +85,12 @@ def Deposit(spheres):
         
         this_sphere.shape.color=rgb_green
         
+    new_spheres=[O.bodies[k] for k in range(3,len(O.bodies)) if O.bodies[k]!=None]
+    
+    print ''
+    print 'after adding'
+    print 'amount of spheres:',len(new_spheres)
+    
 #------------------------------------------------------------------------------
 """
 Assign the parameter to spheres model

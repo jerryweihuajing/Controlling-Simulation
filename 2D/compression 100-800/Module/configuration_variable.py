@@ -58,15 +58,15 @@ list_spheres_function=[Base2Spheres,
 Model2Spheres()
 
 #combine the output case name
-for this_factor in list_factor:
+for k in range(len(list_factor)):
     
-    if this_factor:
+    if list_factor[k]:
         
         #expand the case name and exp name
-        exp_name,case_name=list_name_function[list_factor.index(this_factor)](exp_name,case_name)
+        exp_name,case_name=list_name_function[k](exp_name,case_name)
  
         #configuration of more factor
-        list_spheres_function[list_factor.index(this_factor)]()
+        list_spheres_function[k]()
         
 #final case name
 case_name=exp_name+case_name
@@ -74,8 +74,6 @@ case_name=exp_name+case_name
 folder_name='./input//'+case_name
 
 #Generate Fold
-O_P.GenerateFold(folder_name)
+GenerateFold(folder_name)
 
-out_file=open(folder_name+'/A_progress=0.00%.txt','w')
-
-RecordData(out_file,spheres)
+RecordData(open(folder_name+'/A_progress=0.00%.txt','w'))

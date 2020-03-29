@@ -33,6 +33,7 @@ maxh = max([O.bodies[i].state.pos[1] for i in id_spheres])
 #coloring the sample -----
 height_step=maxh/(n_layer)
 
+print("")
 print("The max height is %.3f" % maxh)
 print("The max length is %.3f" % maxl)
 
@@ -48,11 +49,10 @@ Returns:
 """
 def Model2Spheres():
     
-    print ''
-    print 'Model to Spheres'
+    print("")
+    print("-- Model to Spheres")
     
     from configuration_color import base_rgb_list
-    from configuration_uplift import map_height_uplift
     from configuration_material_compression import m_rock
     
     #so many conditions

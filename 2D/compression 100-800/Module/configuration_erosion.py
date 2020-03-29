@@ -26,6 +26,8 @@ def ErosionName(exp_name,case_name):
     
     exp_name+=' erosion'
     
+    case_name+=' eP='+str(erosion_period)
+    
     return exp_name,case_name
 
 #------------------------------------------------------------------------------
@@ -33,20 +35,21 @@ def ErosionName(exp_name,case_name):
 Erode spheres who are higher than y_max
 
 Args:
-    which_O: O object
-    y_max: max height
+    None
     
 Returns:
-    spheres object
+    None
 """
-def Erosion(which_O,y_max):
+def Erosion():
     
     print ''
     print '-- Erosion'
     
-    old_bodies=[1 for this_body in O.bodies if this_body!=None]
+    old_spheres=[O.bodies[k].state.pos[1] for k in range(3,len(O.bodies)) if O.bodies[k]!=None]
     
-    spheres=[]  
+    y_max=0.8*max(old_spheres)
+    
+    new_spheres=[]  
     
     #create idx list for deleting
     idx_to_delete=[]
@@ -63,26 +66,21 @@ def Erosion(which_O,y_max):
             
         else:
             
-            spheres.append(O.bodies[k])
+            new_spheres.append(O.bodies[k])
             
     print ''
     print 'before delete'
-    print 'amount of bodies:',len(old_bodies)   
+    print 'amount of spheres:',len(old_spheres)   
     
     #delete from O.bodies
     for this_idx in idx_to_delete:
         
         O.bodies.erase(this_idx)
-        
-    new_bodies=[1 for this_body in O.bodies if this_body!=None]
-    
+          
     print ''
     print 'after delete'
-    print 'amount of bodies:',len(new_bodies)
-    print 'amount of spheres:',len(spheres)
+    print 'amount of spheres:',len(new_spheres)
     
-    return spheres
-
 #------------------------------------------------------------------------------
 """
 Assign the parameter to spheres model
@@ -95,4 +93,5 @@ Returns:
 """
 def Erosion2Spheres():
     
+    print ''
     print '-- Erosion to Spheres'

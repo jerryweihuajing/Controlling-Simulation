@@ -32,7 +32,7 @@ Returns:
 def StartPushing():
     
     print ''
-    print 'Start Pushing'
+    print '-- Start Pushing'
     
     if O.iter < pre_thres:
         
@@ -56,7 +56,7 @@ def StartPushing():
         wall_right.state.vel = Vector3( -v, 0,0)
         wall_bottom.state.vel = Vector3( 0, 0,0)
         
-    controller.command = 'StopPushing()'
+    controller.command = 'CheckPushing()'
 
     O.engines = O.engines
 
@@ -74,34 +74,32 @@ Args:
 Returns:
     None
 """
-def StopPushing():
+def CheckPushing():
     
     print ''
-    print 'Stop Pushing'
+    print '-- Check Pushing'
     
     offset=box_length-(wall_right.state.pos[0]-wall_left.state.pos[0]) #wall ypos
     progress=(offset/box_length)*100
 
+    print ''
     print 'iter',O.iter
     print 'the offset is %.2f' %offset
     print 'the progress is %.2f%%' %progress
     print ''
 
     if O.iter%savePeriod==0:
-        
-        out_file=open(folder_name+'/A_progress=%.2f%%' %progress+".txt",'w')
 
-        spheres=[O.bodies[k] for k in range(3,len(O.bodies))]
-            
-        RecordData(out_file,spheres)
+        RecordData(open(folder_name+'/A_progress=%.2f%%' %progress+".txt",'w'))
         
     if O.iter%savePeriod==3*checkPeriod:
 
-        out_file=open(folder_name+'/B_progress=%.2f%%' %progress+".txt",'w')
-            
-        spheres=[O.bodies[k] for k in range(3,len(O.bodies))]
-        
-        RecordData(out_file,spheres)
+        #make erosion
+        if O.iter>savePeriod and erosion and (O.iter==erosion_period*savePeriod+3*checkPeriod): 
+
+            Erosion()
+       
+        RecordData(open(folder_name+'/B_progress=%.2f%%' %progress+".txt",'w'))
         
         #end the loop
         if O.iter==7*savePeriod+3*checkPeriod:
@@ -114,11 +112,5 @@ def StopPushing():
         #make deposition 
         if O.iter>savePeriod and deposit and (O.iter==deposit_period*savePeriod+3*checkPeriod): 
         
-            Deposit(spheres)
+            Deposit()
             
-        #make deposition 
-        if O.iter>savePeriod and erosion and (O.iter==erosion_period*savePeriod+3*checkPeriod): 
-
-            erosion_height=0.9*max([O.bodies[k].state.pos[1] for k in range(3,len(O.bodies)) if O.bodies[k]!=None])
-                
-            spheres=Erosion(O,erosion_height)

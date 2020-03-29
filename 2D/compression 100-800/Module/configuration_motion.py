@@ -29,7 +29,7 @@ InteractionLoop(
     ),
 
 NewtonIntegrator(damping = 0.4, gravity = (0,-9.81,0)),
-PyRunner(command = 'startPushing()', iterPeriod = checkPeriod, label = 'controller'),
+PyRunner(command = 'StartPushing()', iterPeriod = checkPeriod, label = 'controller'),
 ]
 
 #snapshot = qt.SnapshotEngine(fileBase='-',iterPeriod=savePeriod)

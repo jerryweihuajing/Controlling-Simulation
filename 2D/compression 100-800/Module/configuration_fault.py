@@ -77,7 +77,7 @@ def Fault2Spheres():
     
     from configuration_model import id_spheres
     from configuration_color import rgb_detachment
-    from configuration_matetrial_compression import m_detachment
+    from configuration_material_compression import m_detachment
     
     for i in id_spheres:
 

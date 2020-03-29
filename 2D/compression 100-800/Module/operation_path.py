@@ -24,7 +24,7 @@ Returns:
 def GenerateFold(path):
 
     print ''
-    print 'Generate Fold',path
+    print '-- Generate Fold'
     
     path=path.strip()
    

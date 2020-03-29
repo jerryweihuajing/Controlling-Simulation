@@ -9,7 +9,7 @@ Created on Sat Mar 28 22:02:32 2020
 @title：Configuration-Uplift
 """
 
-from configuration_model import maxl
+from configuration_container import box_length
 
 uplift_height=20
 uplift_width=100
@@ -21,7 +21,7 @@ k_uplift=uplift_height/uplift_width
 #map between x and y
 map_height_uplift={}
 
-for k in range(int(maxl)):
+for k in range(int(box_length)):
     
     if k<uplift_width:
         
@@ -70,7 +70,7 @@ def Uplift2Spheres():
     from configuration_model import id_spheres
     from configuration_color import rgb_uplift
     from configuration_uplift import map_height_uplift
-    from configuration_matetrial_compression import m_uplift
+    from configuration_material_compression import m_uplift
       
     for i in id_spheres:
     
