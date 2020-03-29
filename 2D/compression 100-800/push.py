@@ -6,7 +6,7 @@ Created on Sat Mar 28 21:42:09 2020
 @company: Nanjing University
 @e-mail: jerryweihuajing@126.com
 
-@title：Script-Push
+@title：script-push
 """
 
 import sys,os
