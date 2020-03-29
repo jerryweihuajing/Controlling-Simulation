@@ -41,6 +41,9 @@ Returns:
 """
 def Erosion(which_O,y_max):
     
+    print ''
+    print '-- Erosion'
+    
     old_bodies=[1 for this_body in O.bodies if this_body!=None]
     
     spheres=[]  

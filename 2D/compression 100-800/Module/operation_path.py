@@ -23,6 +23,9 @@ Returns:
 """
 def GenerateFold(path):
 
+    print ''
+    print 'Generate Fold',path
+    
     path=path.strip()
    
     path=path.rstrip("\\")

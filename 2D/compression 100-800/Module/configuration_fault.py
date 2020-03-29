@@ -72,11 +72,12 @@ Returns:
 """    
 def Fault2Spheres():
     
+    print ''
     print '-- Fault to Spheres'
     
     from configuration_model import id_spheres
     from configuration_color import rgb_detachment
-    from configuration_matetrial import m_detachment
+    from configuration_matetrial_compression import m_detachment
     
     for i in id_spheres:
 

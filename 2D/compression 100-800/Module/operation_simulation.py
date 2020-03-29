@@ -31,6 +31,9 @@ Returns:
 """
 def StartPushing():
     
+    print ''
+    print 'Start Pushing'
+    
     if O.iter < pre_thres:
         
         return
@@ -72,6 +75,9 @@ Returns:
     None
 """
 def StopPushing():
+    
+    print ''
+    print 'Stop Pushing'
     
     offset=box_length-(wall_right.state.pos[0]-wall_left.state.pos[0]) #wall ypos
     progress=(offset/box_length)*100

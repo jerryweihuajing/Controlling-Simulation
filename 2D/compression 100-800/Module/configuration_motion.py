@@ -38,10 +38,10 @@ PyRunner(command = 'startPushing()', iterPeriod = checkPeriod, label = 'controll
 #O.dt =3* utils.PWaveTimeStep()
 O.dt=0.0027
 
-TW1 = TesselationWrapper() #TW1 records cumulative strain data
-TW1.setState(0)
-TW1.setState(1)
+#TW1 = TesselationWrapper() #TW1 records cumulative strain data
+#TW1.setState(0)
+#TW1.setState(1)
 #TW1.defToVtk("./cumulative strain/start.vtk")
 
-TW2 = TesselationWrapper() #TW2 records periodical strain data
-TW2.setState(0)
+#TW2 = TesselationWrapper() #TW2 records periodical strain data
+#TW2.setState(0)

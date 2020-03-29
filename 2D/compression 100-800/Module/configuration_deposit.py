@@ -48,8 +48,11 @@ Returns:
 """
 def Deposit(spheres):
     
+    print ''
+    print '-- Deposit'
+    
     from configuration_color import rgb_green
-    from configuration_material import m_rock_compression
+    from configuration_material_compression import m_rock
     
     x_max = max([this_sphere.state.pos[0] for this_sphere in spheres])
     y_max = max([this_sphere.state.pos[1] for this_sphere in spheres])
@@ -63,7 +66,7 @@ def Deposit(spheres):
                            (x_max-deposit_offset, y_max+2*deposit_thickness,0),
                            rMean = 1, rRelFuzz = 0.2)
     
-    deposit_pack.toSimulation(material = m_rock_compression)
+    deposit_pack.toSimulation(material = m_rock)
     
     print 'amount of deposit',len(deposit_pack)
     
@@ -85,4 +88,5 @@ Returns:
 """
 def Deposit2Spheres():
     
+    print ''
     print '-- Deposit to Spheres'
