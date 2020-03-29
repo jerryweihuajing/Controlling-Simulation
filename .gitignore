@@ -1,6 +1,4 @@
 *.pyc
 .idea/
-input/
-output/
-Figure/
 __pycache__/
+Data/
