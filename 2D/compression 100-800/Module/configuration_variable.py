@@ -71,7 +71,7 @@ for k in range(len(list_factor)):
 #final case name
 case_name=exp_name+case_name
 
-folder_name='./input//'+case_name
+folder_name='./Data/input/'+case_name
 
 #Generate Fold
 GenerateFolder(folder_name)
