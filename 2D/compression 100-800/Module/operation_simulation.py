@@ -83,9 +83,9 @@ def CheckPushing():
     progress=(offset/box_length)*100
 
     print ''
-    print 'iter',O.iter
-    print 'the offset is %.2f' %offset
-    print 'the progress is %.2f%%' %progress
+    print '-> iter',O.iter
+    print '-> the offset is %.2f' %offset
+    print '-> the progress is %.2f%%' %progress
     print ''
 
     if O.iter%savePeriod==0:
