@@ -10,7 +10,7 @@ Created on Sat Mar 28 21:25:09 2020
 """
 
 salt_thickness=10
-salt_depth=25
+salt_depth=30
 salt_offset=0
 salt_width=800
 

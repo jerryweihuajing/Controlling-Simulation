@@ -13,8 +13,8 @@ import numpy as np
 
 from configuration_container import box_length
 
-uplift_height=30
-uplift_width=200
+uplift_height=20
+uplift_width=100
 uplift_offset=300
 
 '''up lift-shape of semi-sphere'''
