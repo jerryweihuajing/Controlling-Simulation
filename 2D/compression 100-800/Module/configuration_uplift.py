@@ -15,7 +15,7 @@ from configuration_container import box_length
 
 uplift_height=20
 uplift_width=100
-uplift_offset=300
+uplift_offset=500
 
 '''up lift-shape of semi-sphere'''
 #curvate radius

@@ -9,8 +9,8 @@ Created on Sat Mar 28 21:25:09 2020
 @title：Configuration-Salt
 """
 
-salt_thickness=10
-salt_depth=30
+salt_thickness=5
+salt_depth=10
 salt_offset=0
 salt_width=800
 
