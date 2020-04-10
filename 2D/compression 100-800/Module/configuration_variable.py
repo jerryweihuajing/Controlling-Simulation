@@ -23,8 +23,8 @@ from configuration_deposit import *
 
 direction='single'
 
-base=False
-salt=False
+base=True
+salt=True
 fault=False
 uplift=False
 erosion=False
