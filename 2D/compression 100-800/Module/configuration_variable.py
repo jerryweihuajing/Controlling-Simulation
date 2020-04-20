@@ -25,7 +25,7 @@ direction='single'
 
 base=True
 salt=True
-fault=False
+fracture=False
 uplift=False
 erosion=False
 deposit=False
@@ -35,14 +35,14 @@ case_name=''
 
 list_factor=[base,
              salt,
-             fault,
+             fracture,
              uplift,
              erosion,
              deposit]
 
 list_name_function=[BaseName,
                     SaltName,
-                    FaultName,
+                    FractureName,
                     UpliftName,
                     ErosionName,
                     DepositName]

@@ -6,38 +6,38 @@ Created on Sat Mar 28 21:44:09 2020
 @company: Nanjing University
 @e-mail: jerryweihuajing@126.com
 
-@title：Configuration-Fault
+@title：Configuration-Fracture
 """
 
 import numpy as np
 
 from configuration_model import maxl
 
-fault_start_depth=50
-fault_end_depth=0
-fault_offset=200
-fault_inclination=30
+fracture_start_depth=50
+fracture_end_depth=0
+fracture_offset=200
+fracture_inclination=30
 
 #map between y and x tuple
-map_fault_y_x={}
+map_fracture_y_x={}
 
-k=np.tan(fault_inclination*np.pi/180)
+k=np.tan(fracture_inclination*np.pi/180)
 
 if k>0:
     
-    b=fault_start_depth-k*(maxl-fault_offset)
+    b=fracture_start_depth-k*(maxl-fracture_offset)
     
 if k<0:
     
-    b=fault_end_depth-k*(maxl-fault_offset)
+    b=fracture_end_depth-k*(maxl-fracture_offset)
     
-fault_width=np.abs(3/np.sin(fault_inclination*np.pi/180))
+fracture_width=np.abs(3/np.sin(fracture_inclination*np.pi/180))
 
-for this_y in range(fault_end_depth,fault_start_depth):
+for this_y in range(fracture_end_depth,fracture_start_depth):
     
     this_x=(this_y-b)/k
     
-    map_fault_y_x[int(this_y)]=(this_x-fault_width/2,this_x+fault_width/2)
+    map_fracture_y_x[int(this_y)]=(this_x-fracture_width/2,this_x+fracture_width/2)
 
 #------------------------------------------------------------------------------
 """
@@ -50,13 +50,13 @@ Args:
 Returns:
     newly case and exp name
 """   
-def FaultName(exp_name,case_name):
+def FractureName(exp_name,case_name):
     
-    exp_name+=' fault'
+    exp_name+=' fracture'
 	
-    case_name+=' fI='+str(fault_inclination)
-    case_name+=' fO='+str(fault_offset)
-    case_name+=' fD='+str(fault_end_depth)+'-'+str(fault_start_depth)
+    case_name+=' fI='+str(fracture_inclination)
+    case_name+=' fO='+str(fracture_offset)
+    case_name+=' fD='+str(fracture_end_depth)+'-'+str(fracture_start_depth)
     
     return exp_name,case_name
 
@@ -70,10 +70,10 @@ Args:
 Returns:
     None
 """    
-def Fault2Spheres():
+def fracture2Spheres():
     
     print ''
-    print '-- Fault to Spheres'
+    print '-- fracture to Spheres'
     
     from configuration_model import id_spheres
     from configuration_color import rgb_detachment
@@ -84,10 +84,10 @@ def Fault2Spheres():
         this_x=O.bodies[i].state.pos[0]
         this_y=O.bodies[i].state.pos[1]
 
-        if int(this_y) in list(map_fault_y_x.keys()):
+        if int(this_y) in list(map_fracture_y_x.keys()):
             
-            x_min=map_fault_y_x[int(this_y)][0]
-            x_max=map_fault_y_x[int(this_y)][1]
+            x_min=map_fracture_y_x[int(this_y)][0]
+            x_max=map_fracture_y_x[int(this_y)][1]
                 
             if x_min<=this_x<=x_max:
   
