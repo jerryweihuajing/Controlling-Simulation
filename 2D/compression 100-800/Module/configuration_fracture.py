@@ -70,7 +70,7 @@ Args:
 Returns:
     None
 """    
-def fracture2Spheres():
+def Fracture2Spheres():
     
     print ''
     print '-- fracture to Spheres'

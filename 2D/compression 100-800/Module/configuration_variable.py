@@ -16,7 +16,7 @@ from configuration_model import *
 
 from configuration_base import *
 from configuration_salt import *
-from configuration_fault import *
+from configuration_fracture import *
 from configuration_uplift import *
 from configuration_erosion import *
 from configuration_deposit import *
@@ -24,8 +24,8 @@ from configuration_deposit import *
 direction='single'
 
 base=True
-salt=True
-fracture=False
+salt=False
+fracture=True
 uplift=False
 erosion=False
 deposit=False
@@ -49,7 +49,7 @@ list_name_function=[BaseName,
 
 list_spheres_function=[Base2Spheres,
                        Salt2Spheres,
-                       Fault2Spheres,
+                       Fracture2Spheres,
                        Uplift2Spheres,
                        Erosion2Spheres,
                        Deposit2Spheres]
