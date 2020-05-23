@@ -23,9 +23,9 @@ from configuration_deposit import *
 
 direction='single'
 
-base=True
+base=False
 salt=False
-fracture=True
+fracture=False
 uplift=False
 erosion=False
 deposit=False
