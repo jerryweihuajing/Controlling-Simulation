@@ -20,7 +20,7 @@ from operation_simulation import *
 from configuration_material import *
 from configuration_base import *
 from configuration_salt import *
-from configuration_fault import *
+from configuration_fracture import *
 from configuration_uplift import *
 from configuration_motion import *
 from configuration_model import *
