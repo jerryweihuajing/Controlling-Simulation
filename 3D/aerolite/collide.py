@@ -68,7 +68,7 @@ box = geom.facetBox(( box_length/2, box_height/2,box_depth/2), ( box_length/2, b
                     material = m_wall)
                    
 O.bodies.append(box)
-print len(O.bodies)
+print(len(O.bodies))
 #adding deposit -----
 spheres = ymport.text('./sample.txt')
 
@@ -143,16 +143,16 @@ for i in id_spheres:
 
 	#O.bodies[i].state.blockedDOFs='XYz'
 
-    	for k in range(n_layer):
+	for k in range(n_layer):
 
 		#rock
-        	if k*height_step<=O.bodies[i].state.pos[1]<=(k+1)*height_step:
+		if k*height_step<=O.bodies[i].state.pos[1]<=(k+1)*height_step:
             
-            		O.bodies[i].shape.color = base_rgb_list[k]
-			O.bodies[i].material = O.materials[m_rock]  
-        
-print "The max height is %.3f" % maxh
-print "The max length is %.3f" % maxl
+    			O.bodies[i].shape.color = base_rgb_list[k]
+    			O.bodies[i].material = O.materials[m_rock]
+			
+print("The max height is %.3f" % maxh)
+print("The max length is %.3f" % maxl)
 
 #TW records stress data
 TW=TesselationWrapper()
@@ -161,7 +161,7 @@ stress=bodyStressTensors()
 
 progress=O.iter
 
-folder_name='./input//'+case_name
+folder_name='./Data/input//'+case_name
 
 #Generate Fold
 GenerateFold(folder_name)
@@ -170,9 +170,9 @@ out_file=open(folder_name+'/A_progress=%d'%progress+".txt",'w')
 
 def RecordData(out_file,which_spheres):
     
-    print ''
-    print 'Record Data'
-    print 'amount of spheres:',len(which_spheres)
+    print('')
+    print('-- Record Data')
+    print('amount of spheres:',len(which_spheres))
     
 	#TW records stress data
     TW=TesselationWrapper()
@@ -226,10 +226,10 @@ spheres_base=spheres
 
 O.run()
 
-print ''
-print '-- Simulation on'
-print '-> case:',case_name
-print ''
+print('')
+print('-- Simulation on')
+print('-> case:',case_name)
+print('')
 
     
 #pushing stage -----
@@ -248,75 +248,75 @@ def startPushing():
 #count = 0 #for indicating the progress of simulation
 def stopSimulation(spheres_base):
     
-    	progress=O.iter
+    progress=O.iter
 
-    	print 'iter',O.iter
-	print ''
-     
-	'''A'''
-	if O.iter%savePeriod==0:
-        
-		out_file=open(folder_name+'/B_progress=%d'%progress+".txt",'w')
-        
-		y_max_base=max([this_sphere.state.pos[1] for this_sphere in spheres_base])
+    print('iter',O.iter)
+    print('')
     
-       		print 'max height of base is %.2f'%y_max_base
-    
-		spheres=[O.bodies[k] for k in range(10,len(O.bodies)) if O.bodies[k]!=None]
-        	
-		if O.iter==savePeriod:
+    '''A'''
+    if O.iter%savePeriod==0:
+        
+        out_file=open(folder_name+'/B_progress=%d'%progress+".txt",'w')
+        
+        y_max_base=max([this_sphere.state.pos[1] for this_sphere in spheres_base])
+        
+        print('max height of base is %.2f'%y_max_base)
 
-			#save the state every 10% of the progress
-			x_max = max([this_sphere.state.pos[0] for this_sphere in spheres])
-			y_max = max([this_sphere.state.pos[1] for this_sphere in spheres])
-			x_min = min([this_sphere.state.pos[0] for this_sphere in spheres])
-			y_min = min([this_sphere.state.pos[1] for this_sphere in spheres])
-			    
-			x_aerolite=(x_min+x_max)*0.5
-			y_aerolite=2*y_max
-			z_aerolite=box_depth/2
-			r_aerolite=5
+        spheres=[O.bodies[k] for k in range(10,len(O.bodies)) if O.bodies[k]!=None]
+        
+    if O.iter==savePeriod:
+        
+        #save the state every 10% of the progress
+        x_max([this_sphere.state.pos[0] for this_sphere in spheres])
+        y_max([this_sphere.state.pos[1] for this_sphere in spheres])
+        x_min([this_sphere.state.pos[0] for this_sphere in spheres])
+        y_min([this_sphere.state.pos[1] for this_sphere in spheres])
+			
+        x_aerolite=(x_min+x_max)*0.5
+        y_aerolite=2*y_max
+        z_aerolite=box_depth/2
+        r_aerolite=5
 
 			#adding deposit -----
-			deposit = pack.SpherePack()
-			deposit.makeCloud((x_aerolite,y_aerolite,z_aerolite),
+        deposit= pack.SpherePack()
+        deposit.makeCloud((x_aerolite,y_aerolite,z_aerolite),
 		      			  (x_aerolite,y_aerolite,z_aerolite),
 			         	  rMean = r_aerolite, rRelFuzz = 0.0)
-			deposit.toSimulation(material = m_rock)
+        deposit.toSimulation(material = m_rock)
 
-		    	print 'amount of deposit',len(deposit)
-
-			a=len(O.bodies)-len(deposit)
-			b=len(O.bodies)
-		    	spheres_deposit=[O.bodies[idx] for idx in range(a,b)]
-
-		    	color_idx=O.iter//savePeriod-1
-
-		    	for this_sphere in spheres_deposit:
-			
-				this_sphere.shape.color=deposit_rgb_list[color_idx]
-
-		RecordData(out_file,spheres)
+        print('amount of deposit',len(deposit))
         
-	'''B'''
-	if O.iter%savePeriod==3*checkPeriod:
+        a=len(O.bodies)-len(deposit)
+        b=len(O.bodies)
+        spheres_deposit=[O.bodies[idx] for idx in range(a,b)]
+
+        color_idx=O.iter//savePeriod-1
+
+        for this_sphere in spheres_deposit:
+			
+            this_sphere.shape.color=deposit_rgb_list[color_idx]
+
+    RecordData(out_file,spheres)
+        
+    '''B'''
+    if O.iter%savePeriod==3*checkPeriod:
         
 		#flag to deposit
-		flag_deposit=True
+        flag_deposit=True
         
-		out_file=open(folder_name+'/B_progress=%d'%progress+".txt",'w')
+        out_file=open(folder_name+'/B_progress=%d'%progress+".txt",'w')
         
-		spheres=[O.bodies[k] for k in range(10,len(O.bodies)) if O.bodies[k]!=None]
-
-		RecordData(out_file,spheres)
+        spheres=[O.bodies[k] for k in range(10,len(O.bodies)) if O.bodies[k]!=None]
+        
+        RecordData(out_file,spheres)
         
 		#end the loop
-        	if O.iter==5*savePeriod+3*checkPeriod:
+        if O.iter==5*savePeriod+3*checkPeriod:
 
-			O.pause()
+            O.pause()
             
-            		print ''
-            		print '-- Simulation off'
-
-            		flag_deposit=False
+            print('')
+            print('-- Simulation off')
+            
+            flag_deposit=False
 	    
