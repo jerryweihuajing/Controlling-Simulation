@@ -30,7 +30,7 @@ from configuration_variable import *
 
 O.run()
 
-print ''
-print '-- Simulation on'
-print '-> case:',case_name
-print ''
+print('')
+print('-- Simulation on')
+print('-> case:',case_name)
+print('')

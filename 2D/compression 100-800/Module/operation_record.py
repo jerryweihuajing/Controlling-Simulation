@@ -28,9 +28,9 @@ def RecordData(out_file):
     
     which_spheres=[O.bodies[k] for k in range(3,len(O.bodies)) if O.bodies[k]!=None]
     
-    print ''
-    print '-- Record Data'
-    print '-> amount of spheres:',len(which_spheres)
+    print('')
+    print('-- Record Data')
+    print('-> amount of spheres:',len(which_spheres))
     
     #TW records stress data
     TW=TesselationWrapper()

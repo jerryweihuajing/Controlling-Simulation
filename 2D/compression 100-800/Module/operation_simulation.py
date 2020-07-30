@@ -31,8 +31,8 @@ Returns:
 """
 def StartPushing():
     
-    print ''
-    print '-- Start Pushing'
+    print('')
+    print('-- Start Pushing')
     
     if O.iter < pre_thres:
         
@@ -76,17 +76,17 @@ Returns:
 """
 def CheckPushing():
     
-    print ''
-    print '-- Check Pushing'
+    print('')
+    print('-- Check Pushing')
     
     offset=box_length-(wall_right.state.pos[0]-wall_left.state.pos[0]) #wall ypos
     progress=(offset/box_length)*100
 
-    print ''
-    print '-> iter',O.iter
-    print '-> the offset is %.2f' %offset
-    print '-> the progress is %.2f%%' %progress
-    print ''
+    print('')
+    print('-> iter',O.iter)
+    print('-> the offset is %.2f' %offset)
+    print('-> the progress is %.2f%%' %progress)
+    print('')
 
     if O.iter%savePeriod==0:
 
@@ -106,8 +106,8 @@ def CheckPushing():
 
             O.pause()
             
-            print ''
-            print '-- Simulation off'
+            print('')
+            print('-- Simulation off')
             
         #make deposition 
         if O.iter>savePeriod and deposit and (O.iter==deposit_period*savePeriod+3*checkPeriod): 
