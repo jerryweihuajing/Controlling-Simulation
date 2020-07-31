@@ -68,7 +68,7 @@ box = geom.facetBox(( box_length/2, box_height/2,box_depth/2), ( box_length/2, b
                     material = m_wall)
                    
 O.bodies.append(box)
-print(len(O.bodies))
+
 #adding deposit -----
 spheres = ymport.text('./sample.txt')
 
@@ -264,39 +264,39 @@ def stopSimulation(spheres_base):
 
         spheres=[O.bodies[k] for k in range(10,len(O.bodies)) if O.bodies[k]!=None]
         
-    if O.iter==savePeriod:
-        
-        #save the state every 10% of the progress
-        x_max([this_sphere.state.pos[0] for this_sphere in spheres])
-        y_max([this_sphere.state.pos[1] for this_sphere in spheres])
-        x_min([this_sphere.state.pos[0] for this_sphere in spheres])
-        y_min([this_sphere.state.pos[1] for this_sphere in spheres])
-			
-        x_aerolite=(x_min+x_max)*0.5
-        y_aerolite=2*y_max
-        z_aerolite=box_depth/2
-        r_aerolite=5
-
-			#adding deposit -----
-        deposit= pack.SpherePack()
-        deposit.makeCloud((x_aerolite,y_aerolite,z_aerolite),
-		      			  (x_aerolite,y_aerolite,z_aerolite),
-			         	  rMean = r_aerolite, rRelFuzz = 0.0)
-        deposit.toSimulation(material = m_rock)
-
-        print('amount of deposit',len(deposit))
-        
-        a=len(O.bodies)-len(deposit)
-        b=len(O.bodies)
-        spheres_deposit=[O.bodies[idx] for idx in range(a,b)]
-
-        color_idx=O.iter//savePeriod-1
-
-        for this_sphere in spheres_deposit:
-			
-            this_sphere.shape.color=deposit_rgb_list[color_idx]
-
-    RecordData(out_file,spheres)
+        if O.iter==savePeriod:
+            
+            #save the state every 10% of the progress
+            x_max=np.max([this_sphere.state.pos[0] for this_sphere in spheres])
+            y_max=np.max([this_sphere.state.pos[1] for this_sphere in spheres])
+            x_min=np.min([this_sphere.state.pos[0] for this_sphere in spheres])
+            y_min=np.min([this_sphere.state.pos[1] for this_sphere in spheres])
+    			
+            x_aerolite=(x_min+x_max)*0.5
+            y_aerolite=2*y_max
+            z_aerolite=box_depth/2
+            r_aerolite=5
+    
+    			#adding deposit -----
+            deposit= pack.SpherePack()
+            deposit.makeCloud((x_aerolite,y_aerolite,z_aerolite),
+    		      			  (x_aerolite,y_aerolite,z_aerolite),
+    			         	  rMean = r_aerolite, rRelFuzz = 0.0)
+            deposit.toSimulation(material = m_rock)
+    
+            print('amount of deposit',len(deposit))
+            
+            a=len(O.bodies)-len(deposit)
+            b=len(O.bodies)
+            spheres_deposit=[O.bodies[idx] for idx in range(a,b)]
+    
+            color_idx=O.iter//savePeriod-1
+    
+            for this_sphere in spheres_deposit:
+    			
+                this_sphere.shape.color=deposit_rgb_list[color_idx]
+    
+        RecordData(out_file,spheres)
         
     '''B'''
     if O.iter%savePeriod==3*checkPeriod:
