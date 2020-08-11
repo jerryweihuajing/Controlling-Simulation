@@ -276,7 +276,7 @@ def stopSimulation(spheres_base):
 	'''A'''
 	if O.iter%savePeriod==0:
         
-		out_file=open(folder_name+'/A_progress=%.2f%%' %progress+".txt",'w')
+		out_file=open(folder_name+'/A_progress=%d' %(O.iter//savePeriod)+".txt",'w')
         
 		y_max_base=max([this_sphere.state.pos[1] for this_sphere in spheres_base])
     
@@ -323,7 +323,7 @@ def stopSimulation(spheres_base):
 		#flag to deposit
 		flag_deposit=True
         
-		out_file=open(folder_name+'/B_progress='+'%.2f%%' %progress+".txt",'w')
+		out_file=open(folder_name+'/B_progress=%d' %(O.iter//savePeriod)+".txt",'w')
         
 		spheres=[O.bodies[k] for k in range(3,len(O.bodies)) if O.bodies[k]!=None]
 

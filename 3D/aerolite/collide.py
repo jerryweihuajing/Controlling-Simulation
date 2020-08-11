@@ -248,7 +248,7 @@ def startPushing():
 #count = 0 #for indicating the progress of simulation
 def stopSimulation(spheres_base):
     
-    progress=O.iter
+    progress=O.iter//savePeriod
 
     print('iter',O.iter)
     print('')
@@ -256,7 +256,7 @@ def stopSimulation(spheres_base):
     '''A'''
     if O.iter%savePeriod==0:
         
-        out_file=open(folder_name+'/B_progress=%d'%progress+".txt",'w')
+        out_file=open(folder_name+'/A_progress=%d'%progress+".txt",'w')
         
         y_max_base=max([this_sphere.state.pos[1] for this_sphere in spheres_base])
         
